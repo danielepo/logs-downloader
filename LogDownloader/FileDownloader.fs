@@ -71,5 +71,5 @@ let SaveLogs (date:DateTime) (runEnvironment:RunEnvironment) (text:string) (time
     match runEnvironment with 
         | RunEnvironment.Test -> testServers |> List.iter (downloadFilesInServer "Logs")
         | RunEnvironment.Preprod -> preProdServers |> List.iter (downloadFilesInServer "Logs")
-        | RunEnvironment.Prod -> prodServers |> Array.ofList |> Array.Parallel.iter (downloadFilesInServer "Logs")
+        | RunEnvironment.Prod -> prodServers |> Array.ofList |> Array.iter (downloadFilesInServer "Logs")
 

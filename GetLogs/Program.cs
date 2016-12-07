@@ -1,6 +1,7 @@
 ﻿using System;
 using LogManager;
 
+
 namespace GetLogs
 {
     class Program

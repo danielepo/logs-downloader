@@ -9,6 +9,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LogDownloader", "LogDownloa
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "StreamLoader", "StreamLoader\StreamLoader.fsproj", "{86670D15-2B45-47D1-A13A-ECA2A99B7150}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LogDonwloader", "LogDonwloader\LogDonwloader.fsproj", "{56E1C431-1F52-46CD-B3D0-A8FB4816466B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +29,15 @@ Global
 		{86670D15-2B45-47D1-A13A-ECA2A99B7150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86670D15-2B45-47D1-A13A-ECA2A99B7150}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86670D15-2B45-47D1-A13A-ECA2A99B7150}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56E1C431-1F52-46CD-B3D0-A8FB4816466B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56E1C431-1F52-46CD-B3D0-A8FB4816466B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56E1C431-1F52-46CD-B3D0-A8FB4816466B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56E1C431-1F52-46CD-B3D0-A8FB4816466B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
