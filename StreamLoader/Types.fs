@@ -25,6 +25,13 @@ type FileType =
 type Link = Link of string
 
 type LogType = 
+    ClientPerformance     
+    | DebugTrace 
+    | PplTrace 
+    | Security 
+    | Unknown
+
+type Log = 
     | ClientPerformance of FileType * DateTime option
     | DebugTrace of FileType * DateTime option
     | PplTrace of FileType * DateTime option
@@ -49,4 +56,4 @@ let applyLogType fn =
 
 type LinkType = 
     | Folder of LinkType seq
-    | File of LogType*Link
+    | File of Log*Link

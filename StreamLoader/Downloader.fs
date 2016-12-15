@@ -65,7 +65,7 @@ module SaveLogs =
         | None -> ()
 
     
-    let download (log:LogType * Link) server text=
+    let download (log:Log * Link) server text=
         let downloadIfContains (content:string) =
             content.Contains text
 

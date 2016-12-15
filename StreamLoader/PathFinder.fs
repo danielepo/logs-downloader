@@ -58,7 +58,7 @@ let toLogType (name:string) =
             | Prefix "DebugTrace." _ -> DebugTrace
             | Prefix "ppl_trace." _ -> PplTrace
             | Prefix "Security." _ -> Security
-            | _ -> (fun _ -> LogType.Unknown)
+            | _ -> (fun _ -> Log.Unknown)
 
     lType toTuple
 
@@ -80,7 +80,12 @@ let rec allLinks (baseUrl, page:System.IO.Stream option):LinkType =
 
     match page with
     | Some stream ->
-        let logFolder = HtmlDocument.Load(stream)
+//        use file = new System.IO.FileStream("somefile.txt",System.IO.FileMode.Create)
+//        stream.CopyTo(file)
+//        file.Close()
+        use reader = new StreamReader(stream)
+        let file = reader.ReadToEnd()
+        let logFolder = HtmlDocument.Parse file
         let links = logFolder.Descendants ["a"]
     
         links 
@@ -108,10 +113,10 @@ let linksInDate  (date:DateTime) (link:LinkType) =
 let fiterByLogType index link= 
     let log,_ = link
     match log with 
-    | ClientPerformance (_) when index = 1-> true
-    | DebugTrace (_) when index = 2 -> true
-    | PplTrace (_) when index = 3 -> true
-    | Security (_) when index = 4 -> true
+    | ClientPerformance (_) when index = LogType.ClientPerformance-> true
+    | DebugTrace (_) when index = LogType.DebugTrace -> true
+    | PplTrace (_) when index = LogType.PplTrace -> true
+    | Security (_) when index = LogType.Security -> true
     | _ -> false
 
 

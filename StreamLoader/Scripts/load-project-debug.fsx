@@ -6,3 +6,4 @@
       "../PathFinder.fs"
       "../LinkBuilder.fs"
       "../Downloader.fs"
+      "../HtmlParser.fs"

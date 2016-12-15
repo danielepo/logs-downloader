@@ -5,3 +5,5 @@
 #r "System.Numerics.dll"
 #r "System.Xml.Linq.dll"
 #r "../../packages/FSharp.Data.2.3.2/lib/net40/FSharp.Data.dll"
+#r "../../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll"
+#r "../../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll"
