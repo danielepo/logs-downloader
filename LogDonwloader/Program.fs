@@ -5,9 +5,27 @@ open LinkBuilder
 open System.IO
 open System
 open System.Linq
+open log4net
+open System.Configuration
+
+type LogLevel = Info | Debug | Warning | Error
+
+let logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType)
+    
+let log = 
+    function
+    | Info -> logger.Info 
+    | Debug -> logger.Debug 
+    | Warning -> logger.Warn 
+    | Error -> logger.Error
 
 [<EntryPoint>]
+
 let main argv = 
+    log4net.Config.XmlConfigurator.Configure( )|> ignore
+  
+    log Error ("Start Application", new Exception())
+
     let getArgument argument= 
         let arg = sprintf "--%s=" argument
         let input:string = argv.FirstOrDefault (fun x -> x.StartsWith(arg))

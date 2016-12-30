@@ -56,22 +56,99 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <Content Include="packages.config" />
+    <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Program.fs" />
-    <None Include="App.config" />
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.6\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.AppContext">
+      <HintPath>..\packages\System.AppContext.4.1.0\lib\net46\System.AppContext.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Collections.NonGeneric">
+      <HintPath>..\packages\System.Collections.NonGeneric.4.0.1\lib\net46\System.Collections.NonGeneric.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Console">
+      <HintPath>..\packages\System.Console.4.0.0\lib\net46\System.Console.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.Process">
+      <HintPath>..\packages\System.Diagnostics.Process.4.1.0\lib\net461\System.Diagnostics.Process.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Diagnostics.StackTrace">
+      <HintPath>..\packages\System.Diagnostics.StackTrace.4.0.1\lib\net46\System.Diagnostics.StackTrace.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Diagnostics.TraceSource">
+      <HintPath>..\packages\System.Diagnostics.TraceSource.4.0.0\lib\net46\System.Diagnostics.TraceSource.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem">
+      <HintPath>..\packages\System.IO.FileSystem.4.0.1\lib\net46\System.IO.FileSystem.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem.Primitives">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.0.1\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.FileSystem.Watcher">
+      <HintPath>..\packages\System.IO.FileSystem.Watcher.4.0.0\lib\net46\System.IO.FileSystem.Watcher.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.NameResolution">
+      <HintPath>..\packages\System.Net.NameResolution.4.0.0\lib\net46\System.Net.NameResolution.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Sockets">
+      <HintPath>..\packages\System.Net.Sockets.4.1.0\lib\net46\System.Net.Sockets.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Numerics" />
     <ProjectReference Include="..\StreamLoader\StreamLoader.fsproj">
       <Name>StreamLoader</Name>
       <Project>{86670d15-2b45-47d1-a13a-eca2a99b7150}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <Reference Include="System.Reflection.TypeExtensions">
+      <HintPath>..\packages\System.Reflection.TypeExtensions.4.1.0\lib\net46\System.Reflection.TypeExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Formatters">
+      <HintPath>..\packages\System.Runtime.Serialization.Formatters.4.3.0\lib\net46\System.Runtime.Serialization.Formatters.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Primitives">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Thread">
+      <HintPath>..\packages\System.Threading.Thread.4.0.0\lib\net46\System.Threading.Thread.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.XmlDocument">
+      <HintPath>..\packages\System.Xml.XmlDocument.4.0.1\lib\net46\System.Xml.XmlDocument.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
