@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetLogs", "GetLogs\GetLogs.csproj", "{45339C9D-5655-4423-8362-203C4F8AF518}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LogDownloader", "LogDownloader\LogDownloader.fsproj", "{FF035C0F-4CA2-4E76-AD20-CA39E96419EC}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "StreamLoader", "StreamLoader\StreamLoader.fsproj", "{86670D15-2B45-47D1-A13A-ECA2A99B7150}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LogDonwloader", "LogDonwloader\LogDonwloader.fsproj", "{56E1C431-1F52-46CD-B3D0-A8FB4816466B}"
@@ -20,14 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{45339C9D-5655-4423-8362-203C4F8AF518}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45339C9D-5655-4423-8362-203C4F8AF518}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45339C9D-5655-4423-8362-203C4F8AF518}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45339C9D-5655-4423-8362-203C4F8AF518}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF035C0F-4CA2-4E76-AD20-CA39E96419EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF035C0F-4CA2-4E76-AD20-CA39E96419EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF035C0F-4CA2-4E76-AD20-CA39E96419EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF035C0F-4CA2-4E76-AD20-CA39E96419EC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86670D15-2B45-47D1-A13A-ECA2A99B7150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86670D15-2B45-47D1-A13A-ECA2A99B7150}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86670D15-2B45-47D1-A13A-ECA2A99B7150}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -55,9 +55,7 @@
     <Compile Include="PathFinder.fs" />
     <Compile Include="LinkBuilder.fs" />
     <Compile Include="Downloader.fs" />
-    <None Include="CompressedPageSample.html" />
     <!--<None Include="Script.fsx" />-->
-    <None Include="LogPageSample.html" />
     <Content Include="app.config" />
     <None Include="Scripts\load-references-debug.fsx">
       <ExcludeFromSourceAnalysis>True</ExcludeFromSourceAnalysis>
