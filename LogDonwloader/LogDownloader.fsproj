@@ -11,8 +11,8 @@
     <AssemblyName>LogDonwloader</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
-    <Name>LogDonwloader</Name>
+    <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
+    <Name>LogDownloader</Name>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -119,6 +119,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\Logger\Logger.fsproj">
+      <Name>Logger</Name>
+      <Project>{0dcfb1e0-7859-4711-8a92-ceccc7a3b6b2}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\StreamLoader\StreamLoader.fsproj">
       <Name>StreamLoader</Name>
       <Project>{86670d15-2b45-47d1-a13a-eca2a99b7150}</Project>

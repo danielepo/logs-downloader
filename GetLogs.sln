@@ -5,7 +5,9 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "StreamLoader", "StreamLoader\StreamLoader.fsproj", "{86670D15-2B45-47D1-A13A-ECA2A99B7150}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LogDonwloader", "LogDonwloader\LogDonwloader.fsproj", "{56E1C431-1F52-46CD-B3D0-A8FB4816466B}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LogDownloader", "LogDonwloader\LogDownloader.fsproj", "{56E1C431-1F52-46CD-B3D0-A8FB4816466B}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Logger", "Logger\Logger.fsproj", "{0DCFB1E0-7859-4711-8A92-CECCC7A3B6B2}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -24,6 +26,10 @@ Global
 		{56E1C431-1F52-46CD-B3D0-A8FB4816466B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56E1C431-1F52-46CD-B3D0-A8FB4816466B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56E1C431-1F52-46CD-B3D0-A8FB4816466B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DCFB1E0-7859-4711-8A92-CECCC7A3B6B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DCFB1E0-7859-4711-8A92-CECCC7A3B6B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DCFB1E0-7859-4711-8A92-CECCC7A3B6B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DCFB1E0-7859-4711-8A92-CECCC7A3B6B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@ open System.IO
 open FSharp.Data
 
 open Types
-open Bo
+open StreamRetreiver
 
 let (|Prefix|_|) (p:string) (s:string) = if s.StartsWith(p) then Some s else None
         

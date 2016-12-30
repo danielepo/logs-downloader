@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.IO.Compression
 open Types
+open StreamRetreiver
 
 let fileToMem (memStream:MemoryStream) (reader:Stream)=
     let sw = new System.Diagnostics.Stopwatch()
@@ -21,7 +22,7 @@ let writeFile name (data, size) =
 module SaveLogs =
     
     let getFile file = 
-        let _,reader = Bo.getPage "http://brepaddc2s01.azgroup.itad.corpnet/" file
+        let _,reader = getPage "http://brepaddc2s01.azgroup.itad.corpnet/" file
         reader
 
     let downloadText name link shouldDownload=

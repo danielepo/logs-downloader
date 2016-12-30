@@ -1,4 +1,4 @@
-﻿module Bo
+﻿module StreamRetreiver
 
 let getPage baseUrl (link:string) =
     try 

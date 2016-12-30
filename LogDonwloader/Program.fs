@@ -22,9 +22,10 @@ let log =
 [<EntryPoint>]
 
 let main argv = 
-    log4net.Config.XmlConfigurator.Configure( )|> ignore
-  
-    log Error ("Start Application", new Exception())
+    log4net.Config.XmlConfigurator.Configure( ) |> ignore
+
+    let log = new Logger.Log(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType)
+    log.info "Start Application"
 
     let getArgument argument= 
         let arg = sprintf "--%s=" argument
