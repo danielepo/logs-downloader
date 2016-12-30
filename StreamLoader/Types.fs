@@ -57,3 +57,7 @@ let applyLogType fn =
 type LinkType = 
     | Folder of LinkType seq
     | File of Log*Link
+
+type SpecialDateTime =
+    | Timed of DateTime
+    | JustDate of DateTime

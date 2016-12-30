@@ -96,19 +96,55 @@ let rec allLinks (baseUrl, page:System.IO.Stream option):LinkType =
 
 
 
-let linksInDate  (date:DateTime) (link:LinkType) =
+let linksInDate  (date:SpecialDateTime) (link:LinkType) =
     let rec worker (tree:LinkType) = 
         match tree with
         | Folder (f) -> f |> Seq.map worker |> Seq.concat
         | File (logType,link) -> seq{ yield (logType,link) }
     
-    worker link
-    |> Seq.filter (
-        fun (log,_) ->
-                match log with
-                | LogTypeDate d -> d.Date = date.Date 
-                | _ -> false)
+    let rec findStartAndEndDate (links:(Log*Link) list):(DateTime option * DateTime option * (Log*Link)) list =
+        let extractDate loglinks = 
+            let flog,_ = loglinks
+            match flog with
+            | ClientPerformance (_,d)  -> d
+            | DebugTrace (_,d)  -> d
+            | PplTrace (_,d)  -> d
+            | Security (_,d)  -> d
+            | Unknown -> None
 
+        match links with
+        | f::s::is -> 
+            let fd = extractDate f
+            let sd = extractDate s
+            (fd, sd, f) :: (findStartAndEndDate (s::is))
+        | [f] ->
+            let fd = extractDate f
+            let sd = None
+            [fd, sd, f] 
+        | [] -> []
+
+    let isInBetween date ((f:DateTime option),(s:DateTime option),a') = 
+        match date with
+        | Timed dateTime -> 
+            let biggerThanFirst = f |> Option.map (fun d -> dateTime >= d)
+            let lowerThanFirst = s |> Option.map (fun d -> dateTime <= d)
+            match biggerThanFirst with
+            | Some first -> 
+                match lowerThanFirst with
+                | Some second -> first && second
+                | None -> true
+            | None -> true
+        | JustDate just->
+            match f with
+            | Some d -> d.Date = just.Date
+            | None -> true
+            
+
+    worker link
+    |> List.ofSeq
+    |> findStartAndEndDate
+    |> List.filter (isInBetween date)
+    |> List.map (fun (_,_,v) -> v)
 
 let fiterByLogType index link= 
     let log,_ = link
