@@ -6,9 +6,9 @@ open FSharp.Data
 
 open Types
 open StreamRetreiver
+open Logger
 
-let (|Prefix|_|) (p:string) (s:string) = if s.StartsWith(p) then Some s else None
-        
+let (|Prefix|_|) (p:string) (s:string) = if s.StartsWith(p) then Some s else None      
 
 let fileNameToDate (filename:string)=    
     let strDate = 
@@ -18,6 +18,7 @@ let fileNameToDate (filename:string)=
             | Prefix "DebugTrace." str -> Some (str.Substring(11, 19))
             | Prefix "ppl_trace." str -> Some (str.Substring(10, 10))
             | Prefix "Security." str -> Some (str.Substring(9, 10))
+            | Prefix "requests." str ->  Some (str.Substring(9, 10))
             | _ -> None
 
         with :? ArgumentOutOfRangeException -> None
@@ -47,6 +48,7 @@ let (|LogTypeDate|_|) =
     | DebugTrace (_,d) -> d
     | PplTrace (_,d) -> d
     | Security (_,d) -> d
+    | Requests (_,d) -> d
     | Unknown -> None
 
 
@@ -58,6 +60,7 @@ let toLogType (name:string) =
             | Prefix "DebugTrace." _ -> DebugTrace
             | Prefix "ppl_trace." _ -> PplTrace
             | Prefix "Security." _ -> Security
+            | Prefix "requests." _ -> Requests
             | _ -> (fun _ -> Log.Unknown)
 
     lType toTuple
@@ -65,24 +68,19 @@ let toLogType (name:string) =
 
 
 
-let rec allLinks (baseUrl, page:System.IO.Stream option):LinkType = 
-    printf "allLinks\n" 
+let rec allLinks (log:Logger) (baseUrl, page:System.IO.Stream option):LinkType = 
     let extractLinkAndDesc (r:HtmlNode) = r.InnerText() , r.AttributeValue("href")
     let toLinkType (description,link:string) = 
-        printf "\t%s\n" description
         if link.EndsWith("/") then       
             link
-            |> getPage baseUrl
-            |> allLinks
+            |> getPage baseUrl log
+            |> allLinks log
         else 
             File (toLogType description,Link link)
     
 
     match page with
     | Some stream ->
-//        use file = new System.IO.FileStream("somefile.txt",System.IO.FileMode.Create)
-//        stream.CopyTo(file)
-//        file.Close()
         use reader = new StreamReader(stream)
         let file = reader.ReadToEnd()
         let logFolder = HtmlDocument.Parse file
@@ -96,7 +94,7 @@ let rec allLinks (baseUrl, page:System.IO.Stream option):LinkType =
 
 
 
-let linksInDate  (date:SpecialDateTime) (link:LinkType) =
+let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
     let rec worker (tree:LinkType) = 
         match tree with
         | Folder (f) -> f |> Seq.map worker |> Seq.concat
@@ -110,13 +108,14 @@ let linksInDate  (date:SpecialDateTime) (link:LinkType) =
             | DebugTrace (_,d)  -> d
             | PplTrace (_,d)  -> d
             | Security (_,d)  -> d
+            | Requests (_,d)  -> d
             | Unknown -> None
 
         match links with
         | f::s::is -> 
             let fd = extractDate f
             let sd = extractDate s
-            (fd, sd, f) :: (findStartAndEndDate (s::is))
+            (fd, sd, s) :: (findStartAndEndDate (s::is))
         | [f] ->
             let fd = extractDate f
             let sd = None
@@ -126,17 +125,41 @@ let linksInDate  (date:SpecialDateTime) (link:LinkType) =
     let isInBetween date ((f:DateTime option),(s:DateTime option),a') = 
         match date with
         | Timed dateTime -> 
+            logger.debug "Date and time"
+            logger.debug "Error Date Time: %s" <| dateTime.ToString()
+            logger.debug "Before Date Time: %A" <| Option.map (fun (d:DateTime) -> d.ToString()) f
+            logger.debug "After Date Time: %A" <|  Option.map (fun (d:DateTime) -> d.ToString()) s
             let biggerThanFirst = f |> Option.map (fun d -> dateTime >= d)
             let lowerThanFirst = s |> Option.map (fun d -> dateTime <= d)
             match biggerThanFirst with
             | Some first -> 
+                logger.debug "Bigger Than First"
                 match lowerThanFirst with
-                | Some second -> first && second
-                | None -> true
+                | Some second -> 
+                    if  (first && second) then
+                        logger.info "%s is in between %s and %s"
+                            <| dateTime.ToString() 
+                            <| f.ToString() 
+                            <| s.ToString()
+                    else
+                        logger.debug "%s is NOT in between %s and %s"
+                            <| dateTime.ToString() 
+                            <| f.ToString() 
+                            <| s.ToString()
+
+                    first && second
+                | None -> 
+                    logger.debug "Is in between %b" true
+                    true
             | None -> true
         | JustDate just->
+            logger.debug "Just Dates"
             match f with
-            | Some d -> d.Date = just.Date
+            | Some d -> 
+                logger.debug "Error Date Time: %s" (just.ToString())
+                logger.debug "Log Date Time %s" (d.Date.ToString())
+                logger.debug "Is in between %b" (d.Date = just.Date)
+                d.Date = just.Date
             | None -> true
             
 
@@ -153,14 +176,17 @@ let fiterByLogType index link=
     | DebugTrace (_) when index = LogType.DebugTrace -> true
     | PplTrace (_) when index = LogType.PplTrace -> true
     | Security (_) when index = LogType.Security -> true
+    | Requests (_) when index = LogType.Requests -> true
     | _ -> false
 
 
 
-let getLinks (logIndex) date path =
-    path
-    |> getPage "http://brepaddc2s01.azgroup.itad.corpnet/"
-    |> allLinks 
-    |> linksInDate date
+let getLinks (logIndex) date path (server:string)=
+    let log = new Logger.Logger (server)
+    
+    path 
+    |> getPage "http://brepaddc2s01.azgroup.itad.corpnet/" log
+    |> allLinks log
+    |> linksInDate log date
     |> Seq.filter (fun x -> fiterByLogType logIndex x)
 

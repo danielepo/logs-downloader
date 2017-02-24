@@ -26,7 +26,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\LogDonwloader.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
-    <StartArguments>--date=2016-12-20 --text="u4i1xb2swcgvk4c2iepxd04u" --type=w --env=p</StartArguments>
+    <StartArguments>--date=2017-02-09 --text=271675309  --type=w --env=test --log-type=debug --folder=contrassegno</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

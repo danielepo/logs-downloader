@@ -29,6 +29,7 @@ type LogType =
     | DebugTrace 
     | PplTrace 
     | Security 
+    | Requests 
     | Unknown
 
 type Log = 
@@ -36,6 +37,7 @@ type Log =
     | DebugTrace of FileType * DateTime option
     | PplTrace of FileType * DateTime option
     | Security of FileType * DateTime option
+    | Requests of FileType * DateTime option
     | Unknown
 
 let mapLogType fn =
@@ -44,6 +46,7 @@ let mapLogType fn =
     | DebugTrace (f,d)-> DebugTrace (fn (f,d))
     | PplTrace (f,d)-> PplTrace (fn (f,d))
     | Security (f,d)-> Security (fn (f,d))
+    | Requests (f,d)-> Security (fn (f,d))
     | Unknown -> Unknown
 
 let applyLogType fn =
@@ -52,6 +55,7 @@ let applyLogType fn =
     | DebugTrace (f,d)-> fn (f,d)
     | PplTrace (f,d)-> fn (f,d)
     | Security (f,d)-> fn (f,d)
+    | Requests (f,d)-> fn (f,d)
     | Unknown -> ()
 
 type LinkType = 

@@ -8,23 +8,12 @@ open System.Linq
 open log4net
 open System.Configuration
 
-type LogLevel = Info | Debug | Warning | Error
-
-let logger = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType)
-    
-let log = 
-    function
-    | Info -> logger.Info 
-    | Debug -> logger.Debug 
-    | Warning -> logger.Warn 
-    | Error -> logger.Error
-
 [<EntryPoint>]
 
 let main argv = 
     log4net.Config.XmlConfigurator.Configure( ) |> ignore
 
-    let log = new Logger.Log(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType)
+    let log = new Logger.Logger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType)
     log.info "Start Application"
 
     let getArgument argument= 
@@ -34,12 +23,6 @@ let main argv =
             Some (input.Substring (arg.Length))
         else
             None
-
-    let links date (server,path) = sprintf "Log/%s" server, PathFinder.getLinks LogType.DebugTrace date path
-
-    let downloadFilesInServer textToFind (server,files) = 
-        for file in files do 
-            Downloader.SaveLogs.download file server textToFind
     
     let getInt rep=
         printf "%s " rep
@@ -59,16 +42,18 @@ let main argv =
                     Some <| JustDate (DateTime(anno,mese,giorno,0,0,0))
             else
                 None
-
-        match getArgument "date" with
-        | Some d -> 
-            try
-                match getArgument "time" with
-                | Some t -> Some <| Timed (DateTime.Parse(sprintf "%s %s" d t))
-                | None -> Some <| JustDate (DateTime.Parse d)
-            with 
-                | :? FormatException -> None
-        | None -> askDate()
+        let choosedDate =
+            match getArgument "date" with
+            | Some d -> 
+                try
+                    match getArgument "time" with
+                    | Some t -> Some <| Timed (DateTime.Parse(sprintf "%s %s" d t))
+                    | None -> Some <| JustDate (DateTime.Parse d)
+                with 
+                    | :? FormatException -> None
+            | None -> askDate()
+        log.info "Download file in date %A" choosedDate
+        choosedDate
 
     let getEnvironment() =
         let askEnv () =
@@ -84,9 +69,9 @@ let main argv =
             | _ -> Environment.Production
     
         match getArgument "env" with
-        | Some e when e = "t" -> Environment.Test
-        | Some e when e = "pr" -> Environment.Preprod
-        | Some e when e = "p" -> Environment.Production
+        | Some e when e = "test" -> Environment.Test
+        | Some e when e = "preprod" -> Environment.Preprod
+        | Some e when e = "prod" -> Environment.Production
         | Some _ | None -> askEnv()
 
 
@@ -114,22 +99,48 @@ let main argv =
             printf "Inserire il testo da cercare\n"
             Console.ReadLine()
 
+    let logType =
+        match getArgument "log-type" with
+        | Some "debug" -> LogType.DebugTrace
+        | Some "client" -> LogType.ClientPerformance
+        | Some "ppl" -> LogType.PplTrace
+        | Some "security" -> LogType.Security
+        | Some "requests" -> LogType.Requests
+        | _ -> LogType.DebugTrace
+    
+    let getFolderName() =
+        match getArgument "folder" with
+        | Some x -> x
+        | None -> "Default"
+
+    let links date (server,path) = server, PathFinder.getLinks <| logType <| date <| path <| server
+
+    let downloadFilesInServer textToFind (server,files) = 
+        let esureFolderExists() = 
+            let folder = sprintf "Log\\%s" <| getFolderName()
+            if not (Directory.Exists folder) then Directory.CreateDirectory folder |> ignore
+        
+        esureFolderExists()
+        let folder = getFolderName()
+        let downloader = Downloader.SaveLogs.download folder server textToFind
+        
+        Seq.iter downloader files 
+    
 
     let downloadLogs (date:SpecialDateTime option) (environment:Types.Environment) appType textToFind =
         let toDateString (specialDate:SpecialDateTime) =
             match specialDate with
             | Timed d | JustDate d -> d.ToString("yyyy-MM-gg")
-            
 
         match date with
         | Some d ->
             
-            printf "\nDate: %s\nEnvirnoment: %s" <| toDateString d <| environment.ToString()
+            log.info "\nDate: %s\nEnvirnoment: %s" <| toDateString d <| environment.ToString()
             getLinksFor appType environment   
             |> Array.ofList
             |> Array.Parallel.iter (links d >> downloadFilesInServer textToFind)
         | None ->
-            printf "Errore parsing data"
+            log.info "Errore parsing data"
        
     if not (Directory.Exists "Log") then Directory.CreateDirectory "Log" |> ignore
     

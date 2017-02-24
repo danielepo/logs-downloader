@@ -2,8 +2,7 @@
 #I __SOURCE_DIRECTORY__
 #load "load-references-debug.fsx"
 #load "../Types.fs"
-      "../Bo.fs"
+      "../StreamRetreiver.fs"
       "../PathFinder.fs"
       "../LinkBuilder.fs"
       "../Downloader.fs"
-      "../HtmlParser.fs"

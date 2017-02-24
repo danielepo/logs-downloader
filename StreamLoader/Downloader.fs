@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.IO.Compression
 open Types
+open Logger
 open StreamRetreiver
 
 let fileToMem (memStream:MemoryStream) (reader:Stream)=
@@ -11,7 +12,6 @@ let fileToMem (memStream:MemoryStream) (reader:Stream)=
     sw.Start() 
     reader.CopyTo(memStream)
     sw.Stop()
-    printf "%d" sw.Elapsed.Seconds
     memStream
 
 
@@ -20,9 +20,10 @@ let writeFile name (data, size) =
     writter.Write(data, 0, size)
 
 module SaveLogs =
-    
+    let mutable logger:Logger = new Logger("")
+
     let getFile file = 
-        let _,reader = getPage "http://brepaddc2s01.azgroup.itad.corpnet/" file
+        let _,reader = getPage "http://brepaddc2s01.azgroup.itad.corpnet/" logger file 
         reader
 
     let downloadText name link shouldDownload=
@@ -66,16 +67,25 @@ module SaveLogs =
         | None -> ()
 
     
-    let download (log:Log * Link) server text=
-        let downloadIfContains (content:string) =
-            content.Contains text
-
+    let download folder (server:string) text (log:Log * Link)=
+        
+        logger <- Logger.Logger(server)
+        let logtype,Link name = log
+        
+        let downloadIfContains name (content:string) =
+            let contains = content.Contains text
+            
+            logger.info "File '%s' %s contains '%s'" name (if contains then "" else "doesn't") text
+            
+            contains
+        
         let downloadStrategy uri ((x,_)) =
-            let fileName name = sprintf "%s_%s.log" server name
+            let fileName name = sprintf "Log/%s/%s_%s.log" folder server name
             match x with 
-            | Log f -> downloadText (fileName f) uri downloadIfContains
-            | Gz f -> downloadGzip (fileName f) uri downloadIfContains
+            | Log f -> downloadText (fileName f) uri (downloadIfContains f)
+            | Gz f -> downloadGzip (fileName f) uri (downloadIfContains f)
             | FileType.Unknown -> ()
 
-        let logtype,Link name = log
+
+        logger.info "Downloading file %s" name
         applyLogType (downloadStrategy name) logtype

@@ -1,12 +1,12 @@
 ﻿namespace Logger
 open log4net
-type Log(_log:ILog) = 
+type Logger(_log:ILog) = 
     
     new(name:string) =  
-        Log(LogManager.GetLogger(name))
+        Logger(LogManager.GetLogger(name))
        
     new(``type``:System.Type) = 
-        Log(LogManager.GetLogger(``type``))
+        Logger(LogManager.GetLogger(``type``))
 
     member x.info format = 
         Printf.ksprintf _log.Info format
