@@ -10,6 +10,12 @@ type ProdServers = string List
 
 type Environment = Test | Preprod | Production
 
+type Program = 
+    | IncassoDA
+    | WSIncassi
+
+let enumToString e =
+    sprintf "%A" e
 
 type EnvironmentServer = {
     Test: TestServers

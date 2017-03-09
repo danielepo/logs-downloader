@@ -1,5 +1,6 @@
 ﻿namespace Logger
 open log4net
+[<AllowNullLiteral>]
 type Logger(_log:ILog) = 
     
     new(name:string) =  

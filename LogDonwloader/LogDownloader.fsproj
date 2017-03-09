@@ -26,7 +26,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\LogDonwloader.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
-    <StartArguments>--date=2017-02-09 --text=271675309  --type=w --env=test --log-type=debug --folder=contrassegno</StartArguments>
+    <StartArguments>--date=2017-03-08 --text=077568364 --program=IncassoDa --env=prod --log-type=debug --folder=abd2 --time=14.41
+</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,10 +59,11 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Program.fs" />
+    <Compile Include="Downloader.fs" />
     <None Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net">

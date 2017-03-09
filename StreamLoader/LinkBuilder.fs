@@ -28,16 +28,22 @@ let environments = {
     ]
 }
 
-let getLinksFor (application) (environment) =
+let programs = [
+    (IncassoDA, WebApp)
+    (WSIncassi, WebService)
+]
+
+let getLinksFor (programApp:Program*Application) environment=
+    let program, application = programApp
     let servers = 
         match environment with 
         | Test -> environments.Test
         | Preprod -> environments.Preprod
         | Production -> environments.Production
-
+        // TODO Gestire invece dei server, gli applicativi: IncassoDA, WSIncassi, NGRA2013 ecc
     servers
     |> List.map (fun x -> 
-        match application with
-        | WebApp ->  x, sprintf "%s/Auto/IncassoDA/Logs/" x
-        | WebService -> x, sprintf "%s/Autosem/WSIncassi/Logs/" x)
-
+        let app =  match application with
+                    | WebApp ->  "Auto"
+                    | WebService -> "Autosem"
+        x, sprintf "%s/%s/%s/Logs/" x app (enumToString program))
