@@ -12,13 +12,16 @@ let (|Prefix|_|) (p:string) (s:string) = if s.StartsWith(p) then Some s else Non
 
 let fileNameToDate (filename:string)=    
     let strDate = 
+        let substring (str:string) from len=
+            if str.Length < from + len then None
+            else Some <| str.Substring(from,len)
         try 
             match filename with 
-            | Prefix "ClientPerformance." str -> Some (str.Substring(18,10))
-            | Prefix "DebugTrace." str -> Some (str.Substring(11, 19))
-            | Prefix "ppl_trace." str -> Some (str.Substring(10, 10))
-            | Prefix "Security." str -> Some (str.Substring(9, 10))
-            | Prefix "requests." str ->  Some (str.Substring(9, 10))
+            | Prefix "ClientPerformance." str -> substring str 18 10
+            | Prefix "DebugTrace." str -> substring str 11 19
+            | Prefix "ppl_trace." str -> substring str 10 10
+            | Prefix "Security." str -> substring str 9 10
+            | Prefix "requests." str ->  substring str 9 10
             | _ -> None
 
         with :? ArgumentOutOfRangeException -> None
@@ -162,12 +165,15 @@ let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
                 d.Date = just.Date
             | None -> true
             
+    let links =
+        worker link
+        |> List.ofSeq
+        |> findStartAndEndDate
+    let links   =
+        links |> List.filter (isInBetween date)
 
-    worker link
-    |> List.ofSeq
-    |> findStartAndEndDate
-    |> List.filter (isInBetween date)
-    |> List.map (fun (_,_,v) -> v)
+    links |> List.map (fun (_,_,v) -> v)
+
 
 let fiterByLogType index link= 
     let log,_ = link
@@ -185,7 +191,7 @@ let getLinks (logIndex) date path (server:string)=
     let log = new Logger.Logger (server)
     
     path 
-    |> getPage "http://brepaddc2s01.azgroup.itad.corpnet/" log
+    |> getPage "http://logauto2.servizi.allianzit/" log
     |> allLinks log
     |> linksInDate log date
     |> Seq.filter (fun x -> fiterByLogType logIndex x)

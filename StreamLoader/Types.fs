@@ -2,17 +2,23 @@
 
 open System
 
-type Application =  WebApp | WebService
+type Application =  
+    | WebApp = 0 
+    | WebService = 1
 
 type TestServers = string List
 type PreProdServers = string List
 type ProdServers = string List
 
-type Environment = Test | Preprod | Production
+type Environment = 
+    | Test = 0 
+    | Preprod = 1 
+    | Production = 2
 
 type Program = 
-    | IncassoDA
-    | WSIncassi
+    | IncassoDA = 0
+    | WSIncassi = 1
+    | GestioneLibriMatricolaDA = 2
 
 let enumToString e =
     sprintf "%A" e
@@ -31,12 +37,12 @@ type FileType =
 type Link = Link of string
 
 type LogType = 
-    ClientPerformance     
-    | DebugTrace 
-    | PplTrace 
-    | Security 
-    | Requests 
-    | Unknown
+    | Unknown = 0
+    | ClientPerformance = 1
+    | DebugTrace = 2
+    | PplTrace = 3
+    | Security = 4
+    | Requests = 5
 
 type Log = 
     | ClientPerformance of FileType * DateTime option

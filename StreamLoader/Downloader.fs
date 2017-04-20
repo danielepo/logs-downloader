@@ -1,4 +1,4 @@
-﻿module Downloader
+﻿module StreamDownloader
 
 open System
 open System.IO
@@ -23,7 +23,7 @@ module SaveLogs =
     let mutable logger:Logger = new Logger("")
 
     let getFile file = 
-        let _,reader = getPage "http://brepaddc2s01.azgroup.itad.corpnet/" logger file 
+        let _,reader = getPage "http://logauto2.servizi.allianzit/" logger file 
         reader
 
     let downloadText name link shouldDownload=
@@ -48,11 +48,18 @@ module SaveLogs =
             use gzStream = new GZipStream(memStream,CompressionMode.Decompress)
             let data = memStream.ToArray()
             let size = BitConverter.ToInt32(data,data.Length - 4)
-            let uncompressedData = Array.init size (fun i -> byte(i*i))
+            let uncompressedData() = 
+                logger.info "link: %s" link
+                logger.info "size: %d" size
+                if size >= 0 then Some <| Array.init size (fun i -> byte(i*i))
+                else  None
 
             memStream.Position <- 0L
-            gzStream.Read(uncompressedData, 0, size) |> ignore
-            uncompressedData,size
+            match uncompressedData() with 
+            | Some data -> 
+                gzStream.Read(data, 0, size) |> ignore
+                data,size
+            | None -> [||], 0
         
         let byteArrToString (data, size) = System.Text.Encoding.ASCII.GetString data , size
         let stringToByteArray (data:string,size) = System.Text.Encoding.ASCII.GetBytes data, size

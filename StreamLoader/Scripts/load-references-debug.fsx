@@ -28,4 +28,5 @@
 #r "../../packages/System.Threading.Thread.4.0.0/lib/net46/System.Threading.Thread.dll"
 #r "System.Xml.dll"
 #r "../../packages/System.Xml.XmlDocument.4.0.1/lib/net46/System.Xml.XmlDocument.dll"
-#r "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.6.1/Facades/System.Runtime.Serialization.Primitives.dll"
+#r "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.5.2/Facades/System.Runtime.Serialization.Primitives.dll"
+#r "System.Configuration.dll"

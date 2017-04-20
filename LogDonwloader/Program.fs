@@ -66,14 +66,14 @@ let main argv =
         let askProgram() = 
             let testo = "Cercare una applicazione o webservice?\n" + "1 * IncassoDA\n" + "2 - WSIncassi\n"
             match getInt testo with
-            | (true, 2) -> (WSIncassi, WebService)
-            | _ -> (IncassoDA, WebApp)
+            | (true, 2) -> (Program.WSIncassi, Application.WebService)
+            | _ -> (Program.IncassoDA, Application.WebApp)
         match getArgument "program" with
         | Some p -> 
             let program = LinkBuilder.programs |> Seq.tryFind (fun (x, _) -> ((enumToString x).ToLower()) = p.ToLower())
             match program with
             | Some x -> x
-            | None -> (IncassoDA, WebApp)
+            | None -> (Program.IncassoDA, Application.WebApp)
         | None -> askProgram()
     
     let getTextToFind() = 
@@ -97,7 +97,7 @@ let main argv =
         | Some x -> x
         | None -> "Default"
     
-    let dto : Downloader.DonwloaderDto = 
+    let dto : Downloader.DownloaderDto = 
         { Environment = getEnvironment()
           TextToFind = getTextToFind()
           FolderName = getFolderName()
