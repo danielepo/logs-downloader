@@ -19,7 +19,7 @@ type Program =
     | IncassoDA = 0
     | WSIncassi = 1
     | GestioneLibriMatricolaDA = 2
-
+    | NGRA2013 = 3
 let enumToString e =
     sprintf "%A" e
 

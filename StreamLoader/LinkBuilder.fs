@@ -30,6 +30,7 @@ let environments = {
 
 let programs = [
     (Types.Program.IncassoDA, Types.Application.WebApp)
+    (Types.Program.NGRA2013, Types.Application.WebApp)
     (Types.Program.GestioneLibriMatricolaDA, Types.Application.WebApp)
     (Types.Program.WSIncassi, Types.Application.WebService)
 ]

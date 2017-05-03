@@ -78,6 +78,7 @@ let programToProgramApp =
     function
     | Types.Program.IncassoDA -> Types.Program.IncassoDA, Types.Application.WebApp
     | Types.Program.GestioneLibriMatricolaDA -> Types.Program.GestioneLibriMatricolaDA, Types.Application.WebApp
+    | Types.Program.NGRA2013 -> Types.Program.NGRA2013, Types.Application.WebApp
     | Types.Program.WSIncassi -> Types.Program.WSIncassi, Types.Application.WebService
 
 let DownladLogs (data:DownloaderDtoExtended) =
