@@ -52,13 +52,22 @@ type Log =
     | Requests of FileType * DateTime option
     | Unknown
 
+let mapToLogType =
+    function 
+    | ClientPerformance _-> LogType.ClientPerformance
+    | DebugTrace _-> LogType.DebugTrace 
+    | PplTrace _-> LogType.PplTrace
+    | Security _-> LogType.Security
+    | Requests _-> LogType.Requests
+    | Unknown -> LogType.Unknown
+
 let mapLogType fn =
     function 
     | ClientPerformance (f,d)-> ClientPerformance (fn (f,d))
     | DebugTrace (f,d)-> DebugTrace (fn (f,d))
     | PplTrace (f,d)-> PplTrace (fn (f,d))
     | Security (f,d)-> Security (fn (f,d))
-    | Requests (f,d)-> Security (fn (f,d))
+    | Requests (f,d)-> Requests (fn (f,d))
     | Unknown -> Unknown
 
 let applyLogType fn =
