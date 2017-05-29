@@ -14,12 +14,12 @@ let getPage baseUrl (logger:Logger) (link:string)=
             geturl.Timeout <- 300000
             baseUrl, Some <| geturl.GetResponse().GetResponseStream()
         with :? System.Net.WebException as ex->
-            logger.error "%s - %s" link ex.Message
+            logger.error <| sprintf "%s - %s" link ex.Message
             baseUrl, None
 
     Policy
         .Handle<System.Net.WebException>()
         .Retry(3,fun x i -> 
-            logger.info "exception opening %s%s" baseUrl link
+            logger.info  <| sprintf "exception opening %s%s" baseUrl link
             logger.error ("exeption opening",x))
         .Execute(execute)

@@ -45,7 +45,7 @@ let main argv =
                 with :? FormatException -> None
             | None -> askDate()
         
-        log.info "Download file in date %A" choosedDate
+        log.info <| sprintf "Download file in date %A" choosedDate
         choosedDate
     
     let getEnvironment() = 

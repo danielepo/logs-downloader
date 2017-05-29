@@ -129,9 +129,9 @@ let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
         match date with
         | Timed dateTime -> 
             logger.debug "Date and time"
-            logger.debug "Error Date Time: %s" <| dateTime.ToString()
-            logger.debug "Before Date Time: %A" <| Option.map (fun (d:DateTime) -> d.ToString()) f
-            logger.debug "After Date Time: %A" <|  Option.map (fun (d:DateTime) -> d.ToString()) s
+            logger.debug  <| sprintf "Error Date Time: %s" ( dateTime.ToString())
+            logger.debug  <| sprintf "Before Date Time: %A" ( Option.map (fun (d:DateTime) -> d.ToString()) f)
+            logger.debug  <| sprintf "After Date Time: %A" ( Option.map (fun (d:DateTime) -> d.ToString()) s)
             let biggerThanFirst = f |> Option.map (fun d -> dateTime >= d)
             let lowerThanFirst = s |> Option.map (fun d -> dateTime <= d)
             match biggerThanFirst with
@@ -140,28 +140,22 @@ let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
                 match lowerThanFirst with
                 | Some second -> 
                     if  (first && second) then
-                        logger.info "%s is in between %s and %s"
-                            <| dateTime.ToString() 
-                            <| f.ToString() 
-                            <| s.ToString()
+                        logger.info <| sprintf "%s is in between %s and %s" (dateTime.ToString()) (f.ToString()) (s.ToString())
                     else
-                        logger.debug "%s is NOT in between %s and %s"
-                            <| dateTime.ToString() 
-                            <| f.ToString() 
-                            <| s.ToString()
+                        logger.debug <| sprintf "%s is NOT in between %s and %s" (dateTime.ToString()) (f.ToString()) (s.ToString())
 
                     first && second
                 | None -> 
-                    logger.debug "Is in between %b" true
+                    logger.debug  <| sprintf"Is in between %b" true
                     true
             | None -> true
         | JustDate just->
             logger.debug "Just Dates"
             match f with
             | Some d -> 
-                logger.debug "Error Date Time: %s" (just.ToString())
-                logger.debug "Log Date Time %s" (d.Date.ToString())
-                logger.debug "Is in between %b" (d.Date = just.Date)
+                logger.debug  <| sprintf "Error Date Time: %s" (just.ToString())
+                logger.debug <| sprintf "Log Date Time %s" (d.Date.ToString())
+                logger.debug <| sprintf "Is in between %b" (d.Date = just.Date)
                 d.Date = just.Date
             | None -> true
             

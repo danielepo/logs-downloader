@@ -12,7 +12,7 @@ open System.Configuration
 
 let private links date logType (server,path) = server, PathFinder.getLinks <| logType <| date <| path <| server
 
-let mutable private log:Logger.Logger = null
+let mutable private log:Logger.ILogger = null
 let private mkDir dir =
     if not (Directory.Exists dir) then Directory.CreateDirectory dir |> ignore
 
@@ -34,7 +34,7 @@ type DownloaderDto = {
     TextToFind: string
     FolderName: string
     LogType: LogType
-    Logger: Logger.Logger
+    Logger: Logger.ILogger
 }    
 
 
@@ -55,7 +55,7 @@ let downloadLogs data =
     match date with
     | Some d ->
             
-        log.info "\nDate: %s\nEnvirnoment: %s" <| toDateString d <| environment.ToString()
+        log.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
         getLinksFor appType environment   
         |> Array.ofList
         |> Array.Parallel.iter (links d logType >> downloadFilesInServer textToFind folderName)
@@ -71,7 +71,7 @@ type DownloaderDtoExtended = {
     TextToFind: string
     FolderName: string
     LogType: LogType
-    Logger: Logger.Logger
+    Logger: Logger.ILogger
 }    
 
 let programToProgramApp = 
