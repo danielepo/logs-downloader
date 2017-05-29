@@ -21,7 +21,7 @@ let fileNameToDate (filename:string)=
             | Prefix "DebugTrace." str -> substring str 11 19
             | Prefix "ppl_trace." str -> substring str 10 10
             | Prefix "Security." str -> substring str 9 10
-            | Prefix "requests." str ->  substring str 9 10
+            | Prefix "requests." str ->  substring str 9 19
             | _ -> None
 
         with :? ArgumentOutOfRangeException -> None
@@ -56,7 +56,7 @@ let (|LogTypeDate|_|) =
 
 
 let toLogType (name:string) =
-    let toTuple = toFileType name , fileNameToDate name
+    let toTuple = toFileType name ,  fileNameToDate name
     let lType = 
         match name with 
             | Prefix "ClientPerformance." _ -> ClientPerformance
@@ -68,19 +68,23 @@ let toLogType (name:string) =
 
     lType toTuple
 
+let makeDateTime s1 s2 s3 = 
+    let frmat = sprintf "%s %s %s" s1 s2 s3
+    DateTime.ParseExact(frmat, "M/d/yyyy h:mm tt", System.Globalization.CultureInfo.InvariantCulture)
 
 
 
 let rec allLinks (log:Logger) (baseUrl, page:System.IO.Stream option):LinkType = 
     let extractLinkAndDesc (r:HtmlNode) = r.InnerText() , r.AttributeValue("href")
-    let toLinkType (description,link:string) = 
+    let toLinkType (description: string,link:string) = 
         if link.EndsWith("/") then       
             link
             |> getPage baseUrl log
             |> allLinks log
         else 
-            File (toLogType description,Link link)
+            File (toLogType description, Link link)
     
+
 
     match page with
     | Some stream ->
@@ -88,14 +92,30 @@ let rec allLinks (log:Logger) (baseUrl, page:System.IO.Stream option):LinkType =
         let file = reader.ReadToEnd()
         let logFolder = HtmlDocument.Parse file
         let links = logFolder.Descendants ["a"]
-    
-        links 
+        
+        let newLinks = 
+            List.ofSeq(logFolder.Descendants ["pre"]).[0].InnerText().Split([|'\r'; '\n'|]) 
+            |> Array.map (fun x -> x.Split(' '))  
+            |> Array.filter (fun x -> x.Length = 6) 
+            |> Array.map (fun x-> x.[5], makeDateTime x.[1] x.[2] x.[3])
+        
+
+        links
         |> Seq.filter (fun r -> r.InnerText() <> "[To Parent Directory]")
-        |> Seq.map (extractLinkAndDesc >> toLinkType)
+        |> Seq.map extractLinkAndDesc
+        |> Seq.map toLinkType
         |> Folder
     | None -> Folder ([] |> Seq.ofList)
 
-
+let extractDate loglinks = 
+    let flog,_ = loglinks
+    match flog with
+    | ClientPerformance (_,d)  -> d
+    | DebugTrace (_,d)  -> d
+    | PplTrace (_,d)  -> d
+    | Security (_,d)  -> d
+    | Requests (_,d)  -> d
+    | Unknown -> None
 
 let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
     let rec worker (tree:LinkType) = 
@@ -104,15 +124,7 @@ let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
         | File (logType,link) -> seq{ yield (logType,link) }
     
     let rec findStartAndEndDate (links:(Log*Link) list):(DateTime option * DateTime option * (Log*Link)) list =
-        let extractDate loglinks = 
-            let flog,_ = loglinks
-            match flog with
-            | ClientPerformance (_,d)  -> d
-            | DebugTrace (_,d)  -> d
-            | PplTrace (_,d)  -> d
-            | Security (_,d)  -> d
-            | Requests (_,d)  -> d
-            | Unknown -> None
+
 
         match links with
         | f::s::is -> 
@@ -158,15 +170,44 @@ let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
                 logger.debug <| sprintf "Is in between %b" (d.Date = just.Date)
                 d.Date = just.Date
             | None -> true
-            
+    
+    let getInCorrectDate (links:(Log*Link)list) (searchDate:SpecialDateTime) =        
+        let rec worker (links:(Log*Link)list) (lastDate:DateTime) =
+            let mutable isHigher = false
+            match links with
+            | [] -> []
+            | l::ls -> 
+                match extractDate l with
+                | None -> l::(worker ls lastDate)
+                | Some d -> 
+                    if lastDate = DateTime.MinValue then worker (l::ls) (d.Date)
+                    else 
+                        match searchDate with
+                        | JustDate date -> 
+                            if date.Date = d.Date then l::(worker ls d)
+                            else worker ls d
+                        | Timed date ->
+                            if date > lastDate && date <= d then [l]
+                            else worker ls d
+
+
+        worker links (DateTime.MinValue)
+
     let links =
         worker link
+        |> Seq.filter (fun x -> (fst x) <> Unknown)
         |> List.ofSeq
-        |> findStartAndEndDate
-    let links   =
-        links |> List.filter (isInBetween date)
+        |> List.sortBy (fun x -> extractDate x)
+        |> List.groupBy (fun (x,y) -> (mapToLogType x))
+        |> List.map (fun (logType, links) -> getInCorrectDate links date)
+        |> List.concat
 
-    links |> List.map (fun (_,_,v) -> v)
+    links
+//        |> findStartAndEndDate
+//    let links   =
+//        links |> List.filter (isInBetween date)
+
+//    links |> List.map (fun (_,_,v) -> v)
 
 
 let fiterByLogType index link= 

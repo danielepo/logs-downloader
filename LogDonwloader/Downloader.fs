@@ -58,7 +58,7 @@ let downloadLogs data =
         log.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
         getLinksFor appType environment   
         |> Array.ofList
-        |> Array.Parallel.iter (links d logType >> downloadFilesInServer textToFind folderName)
+        |> Array.iter (links d logType >> downloadFilesInServer textToFind folderName)
     | None ->
         log.info "Errore parsing data"
        
