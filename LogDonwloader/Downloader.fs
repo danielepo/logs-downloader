@@ -8,29 +8,29 @@ open System
 open System.Linq
 open log4net
 open System.Configuration
+open Logger
 
 
-let private links date logType (server,path) = server, PathFinder.getLinks <| logType <| date <| path <| server
+let private links date logType (log:Logger.ILogger) (server,path) = server, PathFinder.getLinks <| logType <| date <| path <| server <| log
 
-let mutable private log:Logger.ILogger = null
 let private mkDir dir =
     if not (Directory.Exists dir) then Directory.CreateDirectory dir |> ignore
 
-let private downloadFilesInServer textToFind folderName (server,files)  = 
+let private downloadFilesInServer textToFind folderName (logger:ILogger) (server,files)  = 
     let esureFolderExists() = 
         sprintf "Log\\%s" <| folderName
         |> mkDir 
         
     esureFolderExists()
     let folder = folderName
-    let downloader = StreamDownloader.SaveLogs.download folder server textToFind
+    let downloader = StreamDownloader.SaveLogs.download folder server textToFind logger
         
     Seq.iter downloader files 
 
 type DownloaderDto = {
     Date: SpecialDateTime option
     Environment: Types.Environment
-    Program: Program * Application
+    Program: Program
     TextToFind: string
     FolderName: string
     LogType: LogType
@@ -47,20 +47,19 @@ let downloadLogs data =
     let logType = data.LogType
     let logger = data.Logger
     mkDir "Log"
-    log <- logger
     let toDateString (specialDate:SpecialDateTime) =
         match specialDate with
         | Timed d | JustDate d -> d.ToString("yyyy-MM-gg")
 
     match date with
     | Some d ->
-            
-        log.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
+        logger.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
         getLinksFor appType environment   
         |> Array.ofList
-        |> Array.iter (links d logType >> downloadFilesInServer textToFind folderName)
+        |> Array.Parallel.iter (links d logType logger >> downloadFilesInServer textToFind folderName logger)
+
     | None ->
-        log.info "Errore parsing data"
+        logger.info "Errore parsing data"
        
     
 type DownloaderDtoExtended = {
@@ -74,12 +73,7 @@ type DownloaderDtoExtended = {
     Logger: Logger.ILogger
 }    
 
-let programToProgramApp = 
-    function
-    | Types.Program.IncassoDA -> Types.Program.IncassoDA, Types.Application.WebApp
-    | Types.Program.GestioneLibriMatricolaDA -> Types.Program.GestioneLibriMatricolaDA, Types.Application.WebApp
-    | Types.Program.NGRA2013 -> Types.Program.NGRA2013, Types.Application.WebApp
-    | Types.Program.WSIncassi -> Types.Program.WSIncassi, Types.Application.WebService
+let programToProgramApp x= programsMap.[x]
 
 let DownladLogs (data:DownloaderDtoExtended) =
     let date =
@@ -94,7 +88,7 @@ let DownladLogs (data:DownloaderDtoExtended) =
     let dto:DownloaderDto = {
         Date = date
         Environment= data.Environment
-        Program= programToProgramApp data.Program
+        Program= data.Program
         TextToFind= data.TextToFind
         FolderName= data.FolderName
         LogType= data.LogType

@@ -74,7 +74,7 @@ let makeDateTime s1 s2 s3 =
 
 
 
-let rec allLinks (log:Logger) (baseUrl, page:System.IO.Stream option):LinkType = 
+let rec allLinks (log:ILogger) (baseUrl, page:System.IO.Stream option):LinkType = 
     let extractLinkAndDesc (r:HtmlNode) = r.InnerText() , r.AttributeValue("href")
     let toLinkType (description: string,link:string) = 
         if link.EndsWith("/") then       
@@ -84,8 +84,6 @@ let rec allLinks (log:Logger) (baseUrl, page:System.IO.Stream option):LinkType =
         else 
             File (toLogType description, Link link)
     
-
-
     match page with
     | Some stream ->
         use reader = new StreamReader(stream)
@@ -99,7 +97,6 @@ let rec allLinks (log:Logger) (baseUrl, page:System.IO.Stream option):LinkType =
             |> Array.filter (fun x -> x.Length = 6) 
             |> Array.map (fun x-> x.[5], makeDateTime x.[1] x.[2] x.[3])
         
-
         links
         |> Seq.filter (fun r -> r.InnerText() <> "[To Parent Directory]")
         |> Seq.map extractLinkAndDesc
@@ -117,15 +114,13 @@ let extractDate loglinks =
     | Requests (_,d)  -> d
     | Unknown -> None
 
-let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
+let linksInDate (logger:ILogger) (date:SpecialDateTime) (link:LinkType) =
     let rec worker (tree:LinkType) = 
         match tree with
         | Folder (f) -> f |> Seq.map worker |> Seq.concat
         | File (logType,link) -> seq{ yield (logType,link) }
     
     let rec findStartAndEndDate (links:(Log*Link) list):(DateTime option * DateTime option * (Log*Link)) list =
-
-
         match links with
         | f::s::is -> 
             let fd = extractDate f
@@ -136,41 +131,7 @@ let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
             let sd = None
             [fd, sd, f] 
         | [] -> []
-
-    let isInBetween date ((f:DateTime option),(s:DateTime option),a') = 
-        match date with
-        | Timed dateTime -> 
-            logger.debug "Date and time"
-            logger.debug  <| sprintf "Error Date Time: %s" ( dateTime.ToString())
-            logger.debug  <| sprintf "Before Date Time: %A" ( Option.map (fun (d:DateTime) -> d.ToString()) f)
-            logger.debug  <| sprintf "After Date Time: %A" ( Option.map (fun (d:DateTime) -> d.ToString()) s)
-            let biggerThanFirst = f |> Option.map (fun d -> dateTime >= d)
-            let lowerThanFirst = s |> Option.map (fun d -> dateTime <= d)
-            match biggerThanFirst with
-            | Some first -> 
-                logger.debug "Bigger Than First"
-                match lowerThanFirst with
-                | Some second -> 
-                    if  (first && second) then
-                        logger.info <| sprintf "%s is in between %s and %s" (dateTime.ToString()) (f.ToString()) (s.ToString())
-                    else
-                        logger.debug <| sprintf "%s is NOT in between %s and %s" (dateTime.ToString()) (f.ToString()) (s.ToString())
-
-                    first && second
-                | None -> 
-                    logger.debug  <| sprintf"Is in between %b" true
-                    true
-            | None -> true
-        | JustDate just->
-            logger.debug "Just Dates"
-            match f with
-            | Some d -> 
-                logger.debug  <| sprintf "Error Date Time: %s" (just.ToString())
-                logger.debug <| sprintf "Log Date Time %s" (d.Date.ToString())
-                logger.debug <| sprintf "Is in between %b" (d.Date = just.Date)
-                d.Date = just.Date
-            | None -> true
-    
+            
     let getInCorrectDate (links:(Log*Link)list) (searchDate:SpecialDateTime) =        
         let rec worker (links:(Log*Link)list) (lastDate:DateTime) =
             let mutable isHigher = false
@@ -203,11 +164,6 @@ let linksInDate (logger:Logger) (date:SpecialDateTime) (link:LinkType) =
         |> List.concat
 
     links
-//        |> findStartAndEndDate
-//    let links   =
-//        links |> List.filter (isInBetween date)
-
-//    links |> List.map (fun (_,_,v) -> v)
 
 
 let fiterByLogType index link= 
@@ -222,9 +178,8 @@ let fiterByLogType index link=
 
 
 
-let getLinks (logIndex) date path (server:string)=
-    let log = new Logger.Logger (server)
-    
+let getLinks (logIndex) date path (server:string) (log:ILogger)=
+        
     path 
     |> getPage "http://logauto2.servizi.allianzit/" log
     |> allLinks log

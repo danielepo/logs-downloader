@@ -6,7 +6,7 @@ open System.IO
 open System.Net
 open System
 
-let getPage baseUrl (logger:Logger) (link:string)=
+let getPage baseUrl (logger:ILogger) (link:string)=
     let execute () =
         try
             let geturl = (System.Net.WebRequest.Create (baseUrl + link))

@@ -19,13 +19,13 @@ let writeFile name (data, size) =
     writter.Write(data, 0, size)
 
 module SaveLogs = 
-    let mutable logger : Logger = new Logger("")
+    let mutable logger : ILogger = new Logger("") :> ILogger
     
-    let getFile file = 
+    let private getFile file = 
         let _, reader = getPage "http://logauto2.servizi.allianzit/" logger file
         reader
     
-    let downloadText name link shouldDownload = 
+    let private downloadText name link shouldDownload = 
         use memStream = new MemoryStream()
         match getFile link with
         | Some r -> 
@@ -40,7 +40,7 @@ module SaveLogs =
                 |> ignore
         | None -> ()
     
-    let downloadGzip name link shouldDownload = 
+    let private downloadGzip name link shouldDownload = 
         let decompress reader = 
             use memStream = new MemoryStream()
             let memStream = fileToMem memStream reader
@@ -72,13 +72,13 @@ module SaveLogs =
                 |> ignore
         | None -> ()
     
-    let download folder (server : string) text (log : Log * Link) = 
-        logger <- Logger.Logger(server)
+    let download folder (server : string) text (_logger:ILogger) (log : Log * Link) = 
+        logger <- _logger
         let logtype, Link name = log
         
         let downloadIfContains name (content : string) = 
             let contains = content.Contains text
-            logger.info <| sprintf "File '%s' %s contains '%s'" name (if contains then ""
+            logger.info <| sprintf "File '%s' %s CONTAINS '%s'" name (if contains then ""
                                                            else "doesn't") text
             contains
         

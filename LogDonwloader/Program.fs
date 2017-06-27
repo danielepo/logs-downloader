@@ -66,14 +66,14 @@ let main argv =
         let askProgram() = 
             let testo = "Cercare una applicazione o webservice?\n" + "1 * IncassoDA\n" + "2 - WSIncassi\n"
             match getInt testo with
-            | (true, 2) -> (Program.WSIncassi, Application.WebService)
-            | _ -> (Program.IncassoDA, Application.WebApp)
+            | (true, 2) -> Program.WSIncassi
+            | _ -> Program.IncassoDA
         match getArgument "program" with
         | Some p -> 
-            let program = LinkBuilder.programs |> Seq.tryFind (fun (x, _) -> ((enumToString x).ToLower()) = p.ToLower())
+            let program = programsMap |> Seq.tryFind (fun x -> ((enumToString x.Key).ToLower()) = p.ToLower())
             match program with
-            | Some x -> x
-            | None -> (Program.IncassoDA, Application.WebApp)
+            | Some x -> x.Key
+            | None -> Program.IncassoDA
         | None -> askProgram()
     
     let getTextToFind() = 

@@ -20,6 +20,14 @@ type Program =
     | WSIncassi = 1
     | GestioneLibriMatricolaDA = 2
     | NGRA2013 = 3
+
+let programsMap: Map<Program, Application> = 
+    [(Program.IncassoDA, Application.WebApp)
+     (Program.GestioneLibriMatricolaDA, Application.WebApp)
+     (Program.NGRA2013, Application.WebApp)
+     (Program.WSIncassi, Application.WebService)]
+     |> Map.ofList
+
 let enumToString e =
     sprintf "%A" e
 

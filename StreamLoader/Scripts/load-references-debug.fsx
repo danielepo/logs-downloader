@@ -8,7 +8,6 @@
 #r "../../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll"
 #r "../../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll"
 #r "../../packages/log4net.2.0.6/lib/net45-full/log4net.dll"
-#r "../../Logger/bin/Debug/Logger.dll"
 #r "../../packages/Polly.5.0.3/lib/net45/Polly.dll"
 #r "../../packages/System.AppContext.4.1.0/lib/net46/System.AppContext.dll"
 #r "../../packages/System.Collections.NonGeneric.4.0.1/lib/net46/System.Collections.NonGeneric.dll"
@@ -30,3 +29,4 @@
 #r "../../packages/System.Xml.XmlDocument.4.0.1/lib/net46/System.Xml.XmlDocument.dll"
 #r "C:/Program Files (x86)/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.5.2/Facades/System.Runtime.Serialization.Primitives.dll"
 #r "System.Configuration.dll"
+#r "../../Logger/bin/Debug/Logger.dll"
