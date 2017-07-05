@@ -22,7 +22,7 @@ module SaveLogs =
     let mutable logger : ILogger = new Logger("") :> ILogger
     
     let private getFile file = 
-        let _, reader = getPage "http://logauto2.servizi.allianzit/" logger file
+        let _, reader = getPage "" logger file
         reader
     
     let private downloadText name link shouldDownload = 
@@ -72,18 +72,25 @@ module SaveLogs =
                 |> ignore
         | None -> ()
     
-    let download folder (server : string) text (_logger:ILogger) (log : Log * Link) = 
+    let download brach folder (server : string) text (_logger:ILogger) (log : Log * Link) = 
         logger <- _logger
         let logtype, Link name = log
         
         let downloadIfContains name (content : string) = 
             let contains = content.Contains text
-            logger.info <| sprintf "File '%s' %s CONTAINS '%s'" name (if contains then ""
-                                                           else "doesn't") text
+            logger.info <| sprintf "File '%s' %s '%s'" name (if contains then "CONTAINS"
+                                                           else "DOESN'T contains") text
             contains
         
-        let downloadStrategy uri ((x, _)) = 
-            let fileName name = sprintf "Log/%s/%s_%s.log" folder server name
+        let downloadStrategy url ((x, _)) = 
+            let uri = 
+                let host = 
+                    match brach with
+                    | Branch.Auto -> "http://logauto2.servizi.allianzit"
+                    | Branch.RV -> "http://logdanni2.servizi.allianzit"
+                sprintf "%s/%s" host url
+            let fileName name = 
+                sprintf "Log/%s/%s_%s.log" folder server name
             match x with
             | Log f -> downloadText (fileName f) uri (downloadIfContains f)
             | Gz f -> downloadGzip (fileName f) uri (downloadIfContains f)

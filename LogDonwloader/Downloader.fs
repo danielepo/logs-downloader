@@ -11,19 +11,19 @@ open System.Configuration
 open Logger
 
 
-let private links date logType (log:Logger.ILogger) (server,path) = server, PathFinder.getLinks <| logType <| date <| path <| server <| log
+let private links host date logType (log:Logger.ILogger) (server,path) = server, PathFinder.getLinks <| host <| logType <| date <| path <| server <| log
 
 let private mkDir dir =
     if not (Directory.Exists dir) then Directory.CreateDirectory dir |> ignore
 
-let private downloadFilesInServer textToFind folderName (logger:ILogger) (server,files)  = 
+let private downloadFilesInServer brach textToFind folderName (logger:ILogger) (server,files)  = 
     let esureFolderExists() = 
         sprintf "Log\\%s" <| folderName
         |> mkDir 
         
     esureFolderExists()
     let folder = folderName
-    let downloader = StreamDownloader.SaveLogs.download folder server textToFind logger
+    let downloader = StreamDownloader.SaveLogs.download brach folder server textToFind logger
         
     Seq.iter downloader files 
 
@@ -41,7 +41,7 @@ type DownloaderDto = {
 let downloadLogs data =
     let date = data.Date
     let environment = data.Environment
-    let appType = data.Program
+    let program = data.Program
     let textToFind = data.TextToFind 
     let folderName = data.FolderName 
     let logType = data.LogType
@@ -51,12 +51,17 @@ let downloadLogs data =
         match specialDate with
         | Timed d | JustDate d -> d.ToString("yyyy-MM-gg")
 
+    let brach = programsBranchMap.[program]
+    let host = 
+        match brach with
+        | Branch.Auto -> "http://logauto2.servizi.allianzit"
+        | Branch.RV -> "http://logdanni2.servizi.allianzit"
     match date with
     | Some d ->
         logger.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
-        getLinksFor appType environment   
+        getLinksFor program environment   
         |> Array.ofList
-        |> Array.Parallel.iter (links d logType logger >> downloadFilesInServer textToFind folderName logger)
+        |> Array.Parallel.iter (links host d logType logger >> downloadFilesInServer brach textToFind folderName logger)
 
     | None ->
         logger.info "Errore parsing data"

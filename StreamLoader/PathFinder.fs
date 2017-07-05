@@ -178,10 +178,10 @@ let fiterByLogType index link=
 
 
 
-let getLinks (logIndex) date path (server:string) (log:ILogger)=
+let getLinks host (logIndex) date path (server:string) (log:ILogger)=
         
     path 
-    |> getPage "http://logauto2.servizi.allianzit/" log
+    |> getPage host log
     |> allLinks log
     |> linksInDate log date
     |> Seq.filter (fun x -> fiterByLogType logIndex x)

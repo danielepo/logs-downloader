@@ -63,6 +63,8 @@
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </None>
     <None Include="Scripts\load-project-debug.fsx" />
+    <None Include="Scripts\load-references-release.fsx" />
+    <None Include="Scripts\load-project-release.fsx" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
