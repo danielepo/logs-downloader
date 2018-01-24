@@ -11,7 +11,8 @@ open System.Configuration
 open Logger
 
 
-let private links host date logType (log:Logger.ILogger) (server,path) = server, PathFinder.getLinks <| host <| logType <| date <| path <| server <| log
+let private getFileLinks host date logType (log:Logger.ILogger) (server,path) = 
+    server, (PathFinder.getLinks host logType date path server log)
 
 let private mkDir dir =
     if not (Directory.Exists dir) then Directory.CreateDirectory dir |> ignore
@@ -61,7 +62,7 @@ let downloadLogs data =
         logger.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
         getLinksFor program environment   
         |> Array.ofList
-        |> Array.Parallel.iter (links host d logType logger >> downloadFilesInServer brach textToFind folderName logger)
+        |> Array.Parallel.iter (getFileLinks host d logType logger >> downloadFilesInServer brach textToFind folderName logger)
 
     | None ->
         logger.info "Errore parsing data"

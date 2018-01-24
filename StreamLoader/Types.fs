@@ -8,7 +8,7 @@ type TestServers = string List
 type PreProdServers = string List
 type ProdServers = string List
 
-type Environment = Test | Preprod | Production
+type Environment = Test | Preprod | Production 
 
 type Branch = RV | Auto
 type Program = 
@@ -198,6 +198,7 @@ let enumToString e =
 type EnvironmentServer = {
     Test: TestServers
     Preprod: PreProdServers
+    PreprodFMO: PreProdServers
     Production: ProdServers
 }
 
@@ -215,6 +216,7 @@ type LogType =
     | PplTrace
     | Security
     | Requests
+    | Functional
 
 type Log = 
     | ClientPerformance of FileType * DateTime option
@@ -222,6 +224,7 @@ type Log =
     | PplTrace of FileType * DateTime option
     | Security of FileType * DateTime option
     | Requests of FileType * DateTime option
+    | Functional of FileType * DateTime option
     | Unknown
 
 let mapToLogType =
@@ -231,6 +234,7 @@ let mapToLogType =
     | PplTrace _-> LogType.PplTrace
     | Security _-> LogType.Security
     | Requests _-> LogType.Requests
+    | Functional _-> LogType.Functional
     | Unknown -> LogType.Unknown
 
 let mapLogType fn =
@@ -240,6 +244,7 @@ let mapLogType fn =
     | PplTrace (f,d)-> PplTrace (fn (f,d))
     | Security (f,d)-> Security (fn (f,d))
     | Requests (f,d)-> Requests (fn (f,d))
+    | Functional (f,d)-> Requests (fn (f,d))
     | Unknown -> Unknown
 
 let applyLogType fn =
@@ -249,6 +254,7 @@ let applyLogType fn =
     | PplTrace (f,d)-> fn (f,d)
     | Security (f,d)-> fn (f,d)
     | Requests (f,d)-> fn (f,d)
+    | Functional (f,d)-> fn (f,d)
     | Unknown -> ()
 
 type LinkType = 

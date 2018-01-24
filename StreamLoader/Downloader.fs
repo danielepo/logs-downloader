@@ -49,8 +49,6 @@ module SaveLogs =
             let size = BitConverter.ToInt32(data, data.Length - 4)
             
             let uncompressedData() = 
-                logger.info <| sprintf "link: %s" link
-                logger.info <| sprintf "size: %d" size
                 if size >= 0 then Some <| Array.init size (fun i -> byte (i * i))
                 else None
             memStream.Position <- 0L

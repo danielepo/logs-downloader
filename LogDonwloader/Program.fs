@@ -34,17 +34,18 @@ let main argv =
                 if hasHora || hasMin then Some <| Timed(DateTime(anno, mese, giorno, hora, min, 0))
                 else Some <| JustDate(DateTime(anno, mese, giorno, 0, 0, 0))
             else None
-        
+        log.info <| sprintf "Culture info: %s\n" System.Globalization.CultureInfo.CurrentCulture.Name
+        log.info <| sprintf "UICulture info: %s\n" System.Globalization.CultureInfo.CurrentUICulture.Name
         let choosedDate = 
+            let culture = new System.Globalization.CultureInfo("en-US")
             match getArgument "date" with
             | Some d -> 
                 try 
                     match getArgument "time" with
-                    | Some t -> Some <| Timed(DateTime.Parse(sprintf "%s %s" d t))
-                    | None -> Some <| JustDate(DateTime.Parse d)
+                    | Some t -> Some <| Timed(DateTime.Parse(sprintf "%s %s" d t, culture))
+                    | None -> Some <| JustDate(DateTime.Parse(d, culture))
                 with :? FormatException -> None
             | None -> askDate()
-        
         log.info <| sprintf "Download file in date %A" choosedDate
         choosedDate
     
@@ -66,14 +67,24 @@ let main argv =
         let askProgram() = 
             let testo = "Cercare una applicazione o webservice?\n" + "1 * IncassoDA\n" + "2 - WSIncassi\n"
             match getInt testo with
-            | (true, 2) -> Program.WSIncassi
-            | _ -> Program.IncassoDA
+            | (true, 2) -> [ Program.WSIncassi ]
+            | _ -> [ Program.IncassoDA; Program.WSIncassi ]
         match getArgument "program" with
         | Some p -> 
-            let program = programsMap |> Seq.tryFind (fun x -> ((enumToString x.Key).ToLower()) = p.ToLower())
-            match program with
-            | Some x -> x.Key
-            | None -> Program.IncassoDA
+            let programs = 
+                p.Split(',')
+                |> Seq.map (fun p -> 
+                       let program = 
+                           programsMap |> Seq.tryFind (fun x -> ((enumToString x.Key).ToLower()) = p.ToLower())
+                       match program with
+                       | Some x -> Some x.Key
+                       | None -> None)
+                |> Seq.filter (fun p -> p.IsSome)
+                |> Seq.map (fun p -> p.Value)
+                |> List.ofSeq
+            match programs |> List.isEmpty with
+            | false -> programs
+            | true -> [ Program.IncassoDA; Program.WSIncassi ]
         | None -> askProgram()
     
     let getTextToFind() = 
@@ -90,16 +101,17 @@ let main argv =
         | Some "ppl" -> LogType.PplTrace
         | Some "security" -> LogType.Security
         | Some "requests" -> LogType.Requests
+        | Some "functional" -> LogType.Functional
         | _ -> LogType.DebugTrace
     
     let getFolderName() = 
         match getArgument "folder" with
         | Some x -> x
         | None -> "Default"
-        
+    
     match argv |> Array.tryFind (fun x -> x = "--help") with
-        | Some _ ->
-            let msg ="""
+    | Some _ -> 
+        let msg = """
 Usage: 
 LogDownloader --text="Testo Da Cercare" --program="Nome Programma"               
               --env="Ambiente" --log-type="Tipo Log" --folder="Cartella"
@@ -126,7 +138,8 @@ Options:
               client
               ppl
               security 
-              requests              
+              requests   
+              functional           
  
  --folder     Cartella nella quale salvare i log
 
@@ -187,19 +200,17 @@ Options:
               WSTOOLTRATTATIVE        
 
 """
-            printf "%s" msg
-            Console.ReadLine() |> ignore
-
-        | None -> 
-
-            let dto : Downloader.DownloaderDto = 
-                { Environment = getEnvironment()
-                  TextToFind = getTextToFind()
-                  FolderName = getFolderName()
-                  LogType = getLogType()
-                  Logger = log
-                  Date = getDate()
-                  Program = getApplicazione() }
-    
-            Downloader.downloadLogs dto
+        printf "%s" msg
+        Console.ReadLine() |> ignore
+    | None -> 
+        let dto program : Downloader.DownloaderDto = 
+            { Environment = getEnvironment()
+              TextToFind = getTextToFind()
+              FolderName = getFolderName()
+              LogType = getLogType()
+              Logger = log
+              Date = getDate()
+              Program = program }
+//        System.Threading.Thread.Sleep(60000)
+        getApplicazione() |> List.iter (fun x -> Downloader.downloadLogs <| dto x)
     0 // return an integer exit code

@@ -26,7 +26,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\LogDonwloader.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <StartArguments>--date=2017-06-28 --text=525046013  --program=IncassoDA --env=test --log-type=debug --folder=prodintest  --time=16.42</StartArguments>
+    <StartArguments>--date=2017-11-10 --text=442945748 --program=wsincassi --env=test --log-type=debug --folder=bnl</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,8 +38,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Release\LogDonwloader.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
-    <StartArguments>--date=2017-06-28 --text=525046013  --program=Incasso
-DA --env=preprod --log-type=debug --folder=prodintest  --time=16.42</StartArguments>
+    <StartArguments>--date=2017-07-25 --text=271435074  --program=WSIncassi
+DA --env=test --log-type=debug --folder=stampaR32</StartArguments>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

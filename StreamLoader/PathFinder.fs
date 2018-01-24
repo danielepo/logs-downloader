@@ -22,6 +22,7 @@ let fileNameToDate (filename:string)=
             | Prefix "ppl_trace." str -> substring str 10 10
             | Prefix "Security." str -> substring str 9 10
             | Prefix "requests." str ->  substring str 9 19
+            | Prefix "FunctionalTrace." str ->  substring str 16 10
             | _ -> None
 
         with :? ArgumentOutOfRangeException -> None
@@ -52,6 +53,7 @@ let (|LogTypeDate|_|) =
     | PplTrace (_,d) -> d
     | Security (_,d) -> d
     | Requests (_,d) -> d
+    | Functional (_,d) -> d 
     | Unknown -> None
 
 
@@ -64,6 +66,7 @@ let toLogType (name:string) =
             | Prefix "ppl_trace." _ -> PplTrace
             | Prefix "Security." _ -> Security
             | Prefix "requests." _ -> Requests
+            | Prefix "FunctionalTrace." _ -> Functional
             | _ -> (fun _ -> Log.Unknown)
 
     lType toTuple
@@ -75,9 +78,10 @@ let makeDateTime s1 s2 s3 =
 
 
 let rec allLinks (log:ILogger) (baseUrl, page:System.IO.Stream option):LinkType = 
-    let extractLinkAndDesc (r:HtmlNode) = r.InnerText() , r.AttributeValue("href")
+    let extractLinkAndDesc (r:HtmlNode) = 
+        r.InnerText() , r.AttributeValue("href")
     let toLinkType (description: string,link:string) = 
-        if link.EndsWith("/") then       
+        if link.EndsWith("/") then  
             link
             |> getPage baseUrl log
             |> allLinks log
@@ -112,9 +116,11 @@ let extractDate loglinks =
     | PplTrace (_,d)  -> d
     | Security (_,d)  -> d
     | Requests (_,d)  -> d
+    | Functional (_,d)  -> d
     | Unknown -> None
 
 let linksInDate (logger:ILogger) (date:SpecialDateTime) (link:LinkType) =
+    logger.info <| sprintf "%A\n" date
     let rec worker (tree:LinkType) = 
         match tree with
         | Folder (f) -> f |> Seq.map worker |> Seq.concat
@@ -162,7 +168,7 @@ let linksInDate (logger:ILogger) (date:SpecialDateTime) (link:LinkType) =
         |> List.groupBy (fun (x,y) -> (mapToLogType x))
         |> List.map (fun (logType, links) -> getInCorrectDate links date)
         |> List.concat
-
+    links |> Seq.iter (fun (x,y) -> logger.info <| sprintf "%A" x )            
     links
 
 
@@ -174,12 +180,13 @@ let fiterByLogType index link=
     | PplTrace (_) when index = LogType.PplTrace -> true
     | Security (_) when index = LogType.Security -> true
     | Requests (_) when index = LogType.Requests -> true
+    | Functional (_) when index = LogType.Functional -> true
     | _ -> false
 
 
 
 let getLinks host (logIndex) date path (server:string) (log:ILogger)=
-        
+    log.info (sprintf "path: %s\n" path)
     path 
     |> getPage host log
     |> allLinks log
