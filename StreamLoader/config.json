@@ -2,8 +2,8 @@
   "credentials": {
     "use": true,
     "user": "eul1363",
-    "password": "",
-    "domain":  "azgroup"
+    "password": "fd",
+    "domain": "azgroup"
   },
   "downloadFolder": "Log",
   "hosts": {
@@ -51,6 +51,73 @@
         "BREPADAS2S17",
         "BREPADAS2S18"
       ]
+    }
+  },
+  "programs": {
+    "auto": {
+      "application": [
+        "Allianz1Web",
+        "DichiarazioniDA",
+        "DuplicatiDA",
+        "FastQuoteAU_AD",
+        "FlexDA",
+        "GesPlafondHost",
+        "GestioneAnnullamentiDA",
+        "GestioneClientiPPU_DA",
+        "GestioneLibriMatricolaDA",
+        "GestionePolizzeAperteDA",
+        "GestioneRevocheDA",
+        "IncassoDA",
+        "InquiryAgenzia_AD",
+        "MicrostockDA",
+        "NGRA2013",
+        "PreventivatoreLMDA",
+        "RisanamentoDA",
+        "ToolTrattativeDA"
+      ],
+      "webservice": [
+        "BMWMotorInsurance",
+        "GestioneDocumentaleWS",
+        "Mondial_Service",
+        "NGRA3_2",
+        "PreventivoBMW",
+        "PreventivoDealer",
+        "PrevIsvap",
+        "PrevIsvapObserver",
+        "Sicurplus",
+        "TestPU",
+        "WSArvato",
+        "WSBordero",
+        "WSConvenzioni",
+        "WsDealerQuote",
+        "WSIncassi",
+        "WSMicrostock",
+        "WSPartnersGrad",
+        "WSPrevweb",
+        "WSPromoFQ",
+        "WSTOOLTRATTATIVE"
+      ]
+    },
+    "ramiVari": {
+      "application": [
+        "Annullamenti_AD",
+        "Appendici_AD",
+        "AZ1CRABackend",
+        "ClausolarioDirezionale",
+        "Conguagli_AD",
+        "ConvertitorePol",
+        "CruscottoPreventivi_AD",
+        "CumuliWS",
+        "DirMPTF",
+        "FastQuoteRV_AD",
+        "GestionePortafoglio",
+        "GRV_AD",
+        "InquiryPrjX",
+        "InquiryRV",
+        "MMA",
+        "ModifichePortafoglio"
+      ],
+      "webservice": [ "_" ]
     }
   }
 }

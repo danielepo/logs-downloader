@@ -20,19 +20,18 @@ let private mkDir dir =
 
 let private downloadFilesInServer brach textToFind folderName (logger:ILogger) (server,files)  = 
     let esureFolderExists() = 
-        sprintf "Log\\%s" <| folderName
+        sprintf "%s\\%s" LinkBuilder.downloadFolder folderName
         |> mkDir 
         
     esureFolderExists()
-    let folder = folderName
-    let downloader = StreamDownloader.SaveLogs.download brach folder server textToFind logger
+    let downloader = StreamDownloader.SaveLogs.download brach folderName server textToFind logger
         
     Seq.iter downloader files 
 
 type DownloaderDto = {
     Date: SpecialDateTime option
     Environment: Types.Environment
-    Program: Program
+    Program: string
     TextToFind: string
     FolderName: string
     LogType: LogType
@@ -48,7 +47,7 @@ let downloadLogs data =
     let folderName = data.FolderName 
     let logType = data.LogType
     let logger = data.Logger
-    mkDir "Log"
+    mkDir LinkBuilder.downloadFolder
     let toDateString (specialDate:SpecialDateTime) =
         match specialDate with
         | Timed d | JustDate d -> d.ToString("yyyy-MM-gg")
@@ -71,7 +70,7 @@ type DownloaderDtoExtended = {
     Date: string
     Time: string
     Environment: Types.Environment
-    Program: Program 
+    Program: string 
     TextToFind: string
     FolderName: string
     LogType: LogType

@@ -7,7 +7,6 @@ open FSharp.Data
 open Types
 
 let getPage baseUrl (logger:ILogger) (link:string)=
-    let config = Servers.Load "./config.json"
 
     let execute () =
         try

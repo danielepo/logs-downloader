@@ -2,31 +2,30 @@
 
 open Types
 
-let configServers = Servers.Load "./config.json"
 let servers = 
     let auto = 
         [
-            Environment.Test, configServers.Servers.Auto.Test |> Array.toList
-            Environment.Preprod, configServers.Servers.Auto.PreProd |> Array.toList
-            Environment.Production, configServers.Servers.Auto.Prod |> Array.toList
+            Environment.Test, config.Servers.Auto.Test |> Array.toList
+            Environment.Preprod, config.Servers.Auto.PreProd |> Array.toList
+            Environment.Production, config.Servers.Auto.Prod |> Array.toList
         ] |> Map.ofList
     let rv = 
         [
-            Environment.Test, configServers.Servers.RamiVari.Test |> Array.toList
-            Environment.Preprod, configServers.Servers.RamiVari.PreProd |> Array.toList
-            Environment.Production, configServers.Servers.RamiVari.Prod |> Array.toList
+            Environment.Test, config.Servers.RamiVari.Test |> Array.toList
+            Environment.Preprod, config.Servers.RamiVari.PreProd |> Array.toList
+            Environment.Production, config.Servers.RamiVari.Prod |> Array.toList
         ] |> Map.ofList
 
     [(Branch.Auto, auto); (Branch.RV, rv) ] |> Map.ofList
 
 let host = 
     function
-    | Branch.Auto -> configServers.Hosts.Auto
-    | Branch.RV -> configServers.Hosts.RamiVari
+    | Branch.Auto -> config.Hosts.Auto
+    | Branch.RV -> config.Hosts.RamiVari
 
-let downloadFolder = configServers.DownloadFolder
+let downloadFolder = config.DownloadFolder
 
-let getLinksFor (program:Program) environment=
+let getLinksFor (program:string) environment=
     
     let branch = programsBranchMap.[program]
     let ``type`` = programsMap.[program]
@@ -36,7 +35,7 @@ let getLinksFor (program:Program) environment=
                     | Application.WebService,_ -> "Autosem"
 
     let buildLink server =
-        sprintf "/%s/%s/%s/Logs/" server app (enumToString program)
+        sprintf "/%s/%s/%s/Logs/" server app program
     
         // TODO Gestire invece dei server, gli applicativi: IncassoDA, WSIncassi, NGRA2013 ecc
     servers.[branch].[environment]

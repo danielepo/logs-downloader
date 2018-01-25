@@ -67,15 +67,15 @@ let main argv =
         let askProgram() = 
             let testo = "Cercare una applicazione o webservice?\n" + "1 * IncassoDA\n" + "2 - WSIncassi\n"
             match getInt testo with
-            | (true, 2) -> [ Program.WSIncassi ]
-            | _ -> [ Program.IncassoDA; Program.WSIncassi ]
+            | (true, 2) -> [ "WSIncassi" ]
+            | _ -> [ "IncassoDA"; "WSIncassi" ]
         match getArgument "program" with
         | Some p -> 
             let programs = 
                 p.Split(',')
                 |> Seq.map (fun p -> 
                        let program = 
-                           programsMap |> Seq.tryFind (fun x -> ((enumToString x.Key).ToLower()) = p.ToLower())
+                           programsMap |> Seq.tryFind (fun x -> (x.Key.ToLower()) = p.ToLower())
                        match program with
                        | Some x -> Some x.Key
                        | None -> None)
@@ -84,7 +84,7 @@ let main argv =
                 |> List.ofSeq
             match programs |> List.isEmpty with
             | false -> programs
-            | true -> [ Program.IncassoDA; Program.WSIncassi ]
+            | true -> [ "IncassoDA"; "WSIncassi" ]
         | None -> askProgram()
     
     let getTextToFind() = 
@@ -203,7 +203,7 @@ Options:
         printf "%s" msg
         Console.ReadLine() |> ignore
     | None -> 
-        let dto program : Downloader.DownloaderDto = 
+        let dtoBuilder program : Downloader.DownloaderDto = 
             { Environment = getEnvironment()
               TextToFind = getTextToFind()
               FolderName = getFolderName()
@@ -212,5 +212,5 @@ Options:
               Date = getDate()
               Program = program }
 //        System.Threading.Thread.Sleep(60000)
-        getApplicazione() |> List.iter (fun x -> Downloader.downloadLogs <| dto x)
+        getApplicazione() |> List.iter (fun x -> Downloader.downloadLogs <| dtoBuilder x)
     0 // return an integer exit code
