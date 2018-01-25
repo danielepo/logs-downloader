@@ -70,7 +70,7 @@ module SaveLogs =
                 |> ignore
         | None -> ()
     
-    let download brach folder (server : string) text (_logger:ILogger) (log : Log * Link) = 
+    let download host folder (server : string) text (_logger:ILogger) (log : Log * Link) = 
         logger <- _logger
         let logtype, Link name = log
         
@@ -81,14 +81,10 @@ module SaveLogs =
             contains
         
         let downloadStrategy url ((x, _)) = 
-            let uri = 
-                let host = 
-                    match brach with
-                    | Branch.Auto -> "http://logauto2.servizi.allianzit"
-                    | Branch.RV -> "http://logdanni2.servizi.allianzit"
-                sprintf "%s/%s" host url
+            let baseFolder = LinkBuilder.downloadFolder
+            let uri = sprintf "%s/%s" host url
             let fileName name = 
-                sprintf "Log/%s/%s_%s.log" folder server name
+                sprintf "%s/%s/%s_%s.log" baseFolder folder server name
             match x with
             | Log f -> downloadText (fileName f) uri (downloadIfContains f)
             | Gz f -> downloadGzip (fileName f) uri (downloadIfContains f)

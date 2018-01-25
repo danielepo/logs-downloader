@@ -2,10 +2,11 @@
 // See the 'F# Tutorial' project for more help.
 module Downloader
 open Types
+open FSharp.Data
 open LinkBuilder
 open System.IO
 open System
-open System.Linq
+
 open log4net
 open System.Configuration
 open Logger
@@ -53,16 +54,14 @@ let downloadLogs data =
         | Timed d | JustDate d -> d.ToString("yyyy-MM-gg")
 
     let brach = programsBranchMap.[program]
-    let host = 
-        match brach with
-        | Branch.Auto -> "http://logauto2.servizi.allianzit"
-        | Branch.RV -> "http://logdanni2.servizi.allianzit"
+
+    let host = LinkBuilder.host brach
     match date with
     | Some d ->
         logger.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
         getLinksFor program environment   
         |> Array.ofList
-        |> Array.Parallel.iter (getFileLinks host d logType logger >> downloadFilesInServer brach textToFind folderName logger)
+        |> Array.Parallel.iter (getFileLinks host d logType logger >> downloadFilesInServer host textToFind folderName logger)
 
     | None ->
         logger.info "Errore parsing data"

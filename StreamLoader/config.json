@@ -1,0 +1,50 @@
+﻿{
+  "downloadFolder": "Log",
+  "Hosts": {
+    "RamiVari": "http://logdanni2.servizi.allianzit",
+    "Auto": "http://logauto2.servizi.allianzit"
+  },
+  "Servers": {
+    "RamiVari": {
+      "Test": [ "BREDNNTF2S01_LBD" ],
+      "PreProd": [ "BREDNNPP2S01_LBD", "BREDNNPP2S02_LBD" ],
+      "Prod": [
+        "BREDNNAS2S01_LBD",
+        "BREDNNAS2S02_LBD",
+        "BREDNNAS2S03_LBD",
+        "BREDNNAS2S04_LBD",
+        "BREDNNAS2S05_LBD",
+        "BREDNNAS2S06_LBD",
+        "BREDNNAS2S07_LBD",
+        "BREDNNAS2S08_LBD",
+        "BREDNNAS2S09_LBD",
+        "BREDNNAS2S10_LBD",
+        "BREDNNAS2S11_LBD"
+      ]
+    },
+    "Auto": {
+      "Test": [ "BREPADTF2S01" ],
+      "PreProd": [ "BREPADPP2S01", "BREPADPP2S02" ],
+      "Prod": [
+        "BREPADAS2S01",
+        "BREPADAS2S02",
+        "BREPADAS2S03",
+        "BREPADAS2S04",
+        "BREPADAS2S05",
+        "BREPADAS2S06",
+        "BREPADAS2S07",
+        "BREPADAS2S08",
+        "BREPADAS2S09",
+        "BREPADAS2S10",
+        "BREPADAS2S11",
+        "BREPADAS2S12",
+        "BREPADAS2S13",
+        "BREPADAS2S14",
+        "BREPADAS2S15",
+        "BREPADAS2S16",
+        "BREPADAS2S17",
+        "BREPADAS2S18"
+      ]
+    }
+  }
+}

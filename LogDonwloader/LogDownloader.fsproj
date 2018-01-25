@@ -26,7 +26,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\LogDonwloader.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <StartArguments>--date=2017-11-10 --text=442945748 --program=wsincassi --env=test --log-type=debug --folder=bnl</StartArguments>
+    <StartArguments>--date=2017-12-26 --time=13.38 --text=75283619 --program=incassoda --env=prod --log-type=debug --folder=bnl</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

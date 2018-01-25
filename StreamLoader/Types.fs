@@ -1,8 +1,12 @@
 ﻿module Types
 
+open FSharp.Data
 open System
 
 type Application =  WebApp | WebService
+
+
+type Servers = JsonProvider<"""./config.json""">
 
 type TestServers = string List
 type PreProdServers = string List

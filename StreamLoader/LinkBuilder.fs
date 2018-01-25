@@ -2,37 +2,30 @@
 
 open Types
 
+let configServers = Servers.Load "./config.json"
 let servers = 
     let auto = 
-        let listofservers = ([
-        Environment.Test, ["BREPADTF2S01"]
-        Environment.Preprod, ["BREPADPP2S01";"BREPADPP2S02"]
-        Environment.Production, [
-            "BREPADAS2S01"; "BREPADAS2S02"; "BREPADAS2S03"
-            "BREPADAS2S04"; "BREPADAS2S05"; "BREPADAS2S06"
-            "BREPADAS2S07"; "BREPADAS2S08"; "BREPADAS2S09"
-            "BREPADAS2S10"; "BREPADAS2S11"; "BREPADAS2S12"
-            "BREPADAS2S13"; "BREPADAS2S14"; "BREPADAS2S15"
-            "BREPADAS2S16"; "BREPADAS2S17"; "BREPADAS2S18" ]
-            ])
-        listofservers |> Map.ofList
+        [
+            Environment.Test, configServers.Servers.Auto.Test |> Array.toList
+            Environment.Preprod, configServers.Servers.Auto.PreProd |> Array.toList
+            Environment.Production, configServers.Servers.Auto.Prod |> Array.toList
+        ] |> Map.ofList
     let rv = 
-        let listofservers = ([
-        Environment.Test, ["BREDNNTF2S01_LBD"]
-        Environment.Preprod, ["BREDNNPP2S01_LBD"; "BREDNNPP2S02_LBD"]
-        Environment.Production, [
-            "BREDNNAS2S01_LBD";"BREDNNAS2S02_LBD"
-            "BREDNNAS2S03_LBD";"BREDNNAS2S04_LBD"
-            "BREDNNAS2S05_LBD";"BREDNNAS2S06_LBD"
-            "BREDNNAS2S07_LBD";"BREDNNAS2S08_LBD"
-            "BREDNNAS2S09_LBD";"BREDNNAS2S10_LBD"
-            "BREDNNAS2S11_LBD" ]
-            ])
-        listofservers |> Map.ofList
+        [
+            Environment.Test, configServers.Servers.RamiVari.Test |> Array.toList
+            Environment.Preprod, configServers.Servers.RamiVari.PreProd |> Array.toList
+            Environment.Production, configServers.Servers.RamiVari.Prod |> Array.toList
+        ] |> Map.ofList
 
-    [(Branch.Auto, auto)
-     (Branch.RV, rv) ] |> Map.ofList
-    
+    [(Branch.Auto, auto); (Branch.RV, rv) ] |> Map.ofList
+
+let host = 
+    function
+    | Branch.Auto -> configServers.Hosts.Auto
+    | Branch.RV -> configServers.Hosts.RamiVari
+
+let downloadFolder = configServers.DownloadFolder
+
 let getLinksFor (program:Program) environment=
     
     let branch = programsBranchMap.[program]
@@ -41,10 +34,7 @@ let getLinksFor (program:Program) environment=
                     | Application.WebApp,Branch.Auto ->  "Auto"
                     | Application.WebApp,Branch.RV ->  "Danni"
                     | Application.WebService,_ -> "Autosem"
-    let host = 
-        match branch with
-        | Branch.Auto -> "http://logauto2.servizi.allianzit"
-        | Branch.RV -> "http://logdanni2.servizi.allianzit"
+
     let buildLink server =
         sprintf "/%s/%s/%s/Logs/" server app (enumToString program)
     
