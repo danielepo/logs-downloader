@@ -108,109 +108,31 @@ let main argv =
         match getArgument "folder" with
         | Some x -> x
         | None -> "Default"
-    
-    match argv |> Array.tryFind (fun x -> x = "--help") with
-    | Some _ -> 
-        let msg = """
-Usage: 
-LogDownloader --text="Testo Da Cercare" --program="Nome Programma"               
-              --env="Ambiente" --log-type="Tipo Log" --folder="Cartella"
-              --date="Data" [--time="Ora evento"] 
 
+    let execute() = 
+        try
+            match argv |> Array.tryFind (fun x -> x = "--help") with
+            | Some _ -> 
+                printf "%s" <| System.IO.File.ReadAllText("help.txt")
+                Console.ReadLine() |> ignore
+                0
+            | None -> 
+                let dtoBuilder program : Downloader.DownloaderDto = 
+                    { Environment = getEnvironment()
+                      TextToFind = getTextToFind()
+                      FolderName = getFolderName()
+                      LogType = getLogType()
+                      Logger = log
+                      Date = getDate()
+                      Program = program }
 
-Options: 
---text        Testo da cercare all'interno dei log
+                let downloadInApp x = dtoBuilder x |> Downloader.downloadLogs
+                let downloadResult = 
+                    getApplicazione() 
+                    |> List.map downloadInApp 
+                    |> List.fold (||) false
+                
+                if downloadResult then 0 else -1
 
---program     Nome del programma per cui scaricare i log, quelli supportati 
-              attualmente sono
-
---date        Giorno in cui cercare i log. Formato YYYY-MM-DD
-
---time        Ora in cui cercare i log. Formato HH.MM
-
---env         Ambiente da cercare. Valori possibili:
-              test
-              preprod
-              prod
-
---log-type    Tipo di log da scaricare. Valori possibili:
-              debug
-              client
-              ppl
-              security 
-              requests   
-              functional           
- 
- --folder     Cartella nella quale salvare i log
-
- --program    tipo di log da scaricare. Valori possibili:
-              Allianz1Web                
-              Annullamenti_AD            
-              Appendici_AD               
-              AZ1CRABackend              
-              BMWMotorInsurance          
-              ClausolarioDirezionale     
-              Conguagli_AD               
-              ConvertitorePol            
-              CruscottoPreventivi_AD     
-              CumuliWS                   
-              DichiarazioniDA            
-              DirMPTF                    
-              DuplicatiDA                
-              FastQuoteAU_AD             
-              FastQuoteRV_AD             
-              FlexDA                     
-              GesPlafondHost             
-              GestioneAnnullamentiDA     
-              GestioneClientiPPU_DA      
-              GestioneDocumentaleWS      
-              GestioneLibriMatricolaDA   
-              GestionePolizzeAperteDA    
-              GestionePortafoglio        
-              GestioneRevocheDA          
-              GRV_AD                     
-              IncassoDA                 
-              InquiryAgenzia_AD          
-              InquiryPrjX                
-              InquiryRV                  
-              MicrostockDA               
-              MMA                        
-              ModifichePortafoglio    
-              Mondial_Service            
-              NGRA2013                   
-              NGRA3_2                    
-              PreventivatoreLMDA         
-              PreventivoBMW              
-              PreventivoDealer           
-              PrevIsvap                  
-              PrevIsvapObserver          
-              RisanamentoDA              
-              Sicurplus                  
-              TestPU                     
-              ToolTrattativeDA           
-              WSArvato                   
-              WSBordero                  
-              WSConvenzioni              
-              WsDealerQuote              
-              WSIncassi                  
-              WSMicrostock               
-              WSPartnersGrad             
-              WSPrevweb                  
-              WSPromoFQ                  
-              WSTOOLTRATTATIVE        
-
-"""
-        printf "%s" msg
-        Console.ReadLine() |> ignore
-    | None -> 
-        let dtoBuilder program : Downloader.DownloaderDto = 
-            { Environment = getEnvironment()
-              TextToFind = getTextToFind()
-              FolderName = getFolderName()
-              LogType = getLogType()
-              Logger = log
-              Date = getDate()
-              Program = program }
-//        System.Threading.Thread.Sleep(60000)
-        getApplicazione() |> List.iter (fun x -> Downloader.downloadLogs <| dtoBuilder x)
-    0 // return an integer exit code
+        with ex -> -2
+    execute() // return an integer exit code

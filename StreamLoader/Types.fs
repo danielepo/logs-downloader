@@ -16,7 +16,16 @@ type ProdServers = string List
 type Environment = Test | Preprod | Production 
 
 type Branch = RV | Auto
-                                      
+
+type DownloadResult =
+    | Downloaded
+    | Error
+    | Skipped
+
+type Result<'a> =
+    | Success of 'a
+    | Error of string                 
+    
 let programsBranchMap =               
     let autoPrograms = 
         Array.concat [|config.Programs.Auto.Application ; config.Programs.Auto.Webservice|]
@@ -102,7 +111,7 @@ let applyLogType fn =
     | Security (f,d)-> fn (f,d)
     | Requests (f,d)-> fn (f,d)
     | Functional (f,d)-> fn (f,d)
-    | Unknown -> ()
+    | Unknown -> DownloadResult.Error
 
 type LinkType = 
     | Folder of LinkType seq
@@ -111,3 +120,5 @@ type LinkType =
 type SpecialDateTime =
     | Timed of DateTime
     | JustDate of DateTime
+
+

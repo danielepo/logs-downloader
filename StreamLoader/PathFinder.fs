@@ -8,21 +8,25 @@ open Types
 open StreamRetreiver
 open Logger
 
-let (|Prefix|_|) (p:string) (s:string) = if s.StartsWith(p) then Some s else None      
+let (|Prefix|_|) (p:string) (s:string) = 
+    let len = p.Length
+    if s.StartsWith(p) then Some (s.Substring len) else None      
 
 let fileNameToDate (filename:string)=    
     let strDate = 
-        let substring (str:string) from len=
-            if str.Length < from + len then None
-            else Some <| str.Substring(from,len)
+        let substring (str:string) =
+            let maybeDate = str.Substring(0,str.IndexOf ".log")
+            if maybeDate.Length > 19 then Some <| str.Substring(0,19)
+            else Some <| str.Substring(0,10)
+            
         try 
             match filename with 
-            | Prefix "ClientPerformance." str -> substring str 18 10
-            | Prefix "DebugTrace." str -> substring str 11 19
-            | Prefix "ppl_trace." str -> substring str 10 10
-            | Prefix "Security." str -> substring str 9 10
-            | Prefix "requests." str ->  substring str 9 19
-            | Prefix "FunctionalTrace." str ->  substring str 16 10
+            | Prefix "ClientPerformance." str -> substring str 
+            | Prefix "DebugTrace." str -> substring str 
+            | Prefix "ppl_trace." str -> substring str 
+            | Prefix "Security." str -> substring str
+            | Prefix "requests." str ->  substring str
+            | Prefix "FunctionalTrace." str ->  substring str 
             | _ -> None
 
         with :? ArgumentOutOfRangeException -> None
@@ -77,7 +81,7 @@ let makeDateTime s1 s2 s3 =
 
 
 
-let rec allLinks (log:ILogger) (baseUrl, page:System.IO.Stream option):LinkType = 
+let rec allLinks (log:ILogger) (baseUrl, page:Result<Stream>):LinkType = 
     let extractLinkAndDesc (r:HtmlNode) = 
         r.InnerText() , r.AttributeValue("href")
     let toLinkType (description: string,link:string) = 
@@ -89,7 +93,7 @@ let rec allLinks (log:ILogger) (baseUrl, page:System.IO.Stream option):LinkType 
             File (toLogType description, Link link)
     
     match page with
-    | Some stream ->
+    | Success stream ->
         use reader = new StreamReader(stream)
         let file = reader.ReadToEnd()
         let logFolder = HtmlDocument.Parse file
@@ -106,7 +110,7 @@ let rec allLinks (log:ILogger) (baseUrl, page:System.IO.Stream option):LinkType 
         |> Seq.map extractLinkAndDesc
         |> Seq.map toLinkType
         |> Folder
-    | None -> Folder ([] |> Seq.ofList)
+    | Error _ -> Folder ([] |> Seq.ofList)
 
 let extractDate loglinks = 
     let flog,_ = loglinks

@@ -26,7 +26,7 @@ let private downloadFilesInServer brach textToFind folderName (logger:ILogger) (
     esureFolderExists()
     let downloader = StreamDownloader.SaveLogs.download brach folderName server textToFind logger
         
-    Seq.iter downloader files 
+    Seq.map downloader files 
 
 type DownloaderDto = {
     Date: SpecialDateTime option
@@ -60,10 +60,14 @@ let downloadLogs data =
         logger.info <| sprintf "\nDate: %s\nEnvirnoment: %s" (toDateString d) (environment.ToString())
         getLinksFor program environment   
         |> Array.ofList
-        |> Array.Parallel.iter (getFileLinks host d logType logger >> downloadFilesInServer host textToFind folderName logger)
-
+        |> Array.Parallel.map (getFileLinks host d logType logger >> downloadFilesInServer host textToFind folderName logger)
+        |> Seq.ofArray
+        |> Seq.concat 
+        |> Seq.filter (fun x -> x = DownloadResult.Downloaded)
+        |> (not << Seq.isEmpty)
     | None ->
         logger.info "Errore parsing data"
+        false
        
     
 type DownloaderDtoExtended = {

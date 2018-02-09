@@ -17,10 +17,11 @@ let getPage baseUrl (logger:ILogger) (link:string)=
                     NetworkCredential(credentials.User, credentials.Password, credentials.Domain)
 
             request.Timeout <- 300000
-            baseUrl, Some <| request.GetResponse().GetResponseStream()
+            baseUrl, Success <| request.GetResponse().GetResponseStream()
         with :? WebException as ex->
-            logger.error <| sprintf "%s - %s" link ex.Message
-            baseUrl, None
+            let msg = sprintf "%s - %s" link ex.Message
+            logger.error <| msg
+            baseUrl, Error msg
 
     Policy
         .Handle<WebException>()

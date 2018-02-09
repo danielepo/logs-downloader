@@ -28,17 +28,18 @@ module SaveLogs =
     let private downloadText name link shouldDownload = 
         use memStream = new MemoryStream()
         match getFile link with
-        | Some r -> 
+        | Success r -> 
             use mem = fileToMem memStream r
             let data = mem.ToArray()
             mem.Close()
             let size = data.Length
             let stringRep = (System.Text.Encoding.ASCII.GetString data)
-            if shouldDownload stringRep then 
-                (data, size)
-                |> writeFile name
-                |> ignore
-        | None -> ()
+            if shouldDownload stringRep 
+            then 
+                writeFile name (data, size)
+                Downloaded
+            else Skipped
+        | Error _ -> DownloadResult.Error
     
     let private downloadGzip name link shouldDownload = 
         let decompress reader = 
@@ -61,14 +62,15 @@ module SaveLogs =
         let byteArrToString (data, size) = System.Text.Encoding.ASCII.GetString data, size
         let stringToByteArray (data : string, size) = System.Text.Encoding.ASCII.GetBytes data, size
         match getFile link with
-        | Some r -> 
+        | Success r -> 
             let stringRep, size = decompress r |> byteArrToString
-            if shouldDownload stringRep then 
-                (stringRep, size)
-                |> stringToByteArray
-                |> writeFile name
-                |> ignore
-        | None -> ()
+            if shouldDownload stringRep 
+            then 
+                (stringRep, size) |> stringToByteArray |> writeFile name
+                Downloaded
+            else
+                Skipped
+        | Error _ -> DownloadResult.Error
     
     let download host folder (server : string) text (_logger:ILogger) (log : Log * Link) = 
         logger <- _logger
@@ -88,7 +90,7 @@ module SaveLogs =
             match x with
             | Log f -> downloadText (fileName f) uri (downloadIfContains f)
             | Gz f -> downloadGzip (fileName f) uri (downloadIfContains f)
-            | FileType.Unknown -> ()
+            | FileType.Unknown -> DownloadResult.Error
         
         logger.info  <| sprintf "Downloading file %s" name
         applyLogType (downloadStrategy name) logtype
