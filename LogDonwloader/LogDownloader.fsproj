@@ -26,7 +26,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\LogDonwloader.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <StartArguments>--help</StartArguments>
+    <StartArguments>--date=2018-02-26 --text=112426529 --program=IncassoDA,WSIncassi --env=preprod --log-type=requests --folder=112426529</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

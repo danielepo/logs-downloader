@@ -1,6 +1,6 @@
 ﻿{
   "credentials": {
-    "use": true,
+    "use": false,
     "user": "eul1363",
     "password": "fd",
     "domain": "azgroup"
@@ -8,7 +8,7 @@
   "downloadFolder": "Log",
   "hosts": {
     "ramiVari": "http://logdanni2.servizi.allianzit",
-    "auto": "http://logauto2.servizi.allianzit"
+    "auto": "http://logpad.azi.allianzit"
   },
   "servers": {
     "ramiVari": {

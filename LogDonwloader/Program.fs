@@ -125,7 +125,6 @@ let main argv =
                       Logger = log
                       Date = getDate()
                       Program = program }
-
                 let downloadInApp x = dtoBuilder x |> Downloader.downloadLogs
                 let downloadResult = 
                     getApplicazione() 
@@ -134,5 +133,8 @@ let main argv =
                 
                 if downloadResult then 0 else -1
 
-        with ex -> -2
+        with ex -> 
+            log.error (ex.Message,ex)
+            -2
+    
     execute() // return an integer exit code
