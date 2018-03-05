@@ -1,8 +1,6 @@
 # logs-downloader
 ## Usage
-```LogDownloader --text="Testo Da Cercare" --program="Nome Programma" \            
-                --env="Ambiente" --log-type="Tipo Log" --folder="Cartella" \
-                --date="Data" [--time="Ora evento"] [--config="path"]```
+```LogDownloader --text="Testo Da Cercare" --program="Nome Programma" --env="Ambiente" --log-type="Tipo Log" --folder="Cartella" --date="Data" [--time="Ora evento"] [--config="path"]```
 
 
 ## Options
