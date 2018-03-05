@@ -1,4 +1,7 @@
 # logs-downloader
+Program used to find a log in a group of servers. 
+
+
 ## Usage
 ```
 LogDownloader --text="Testo Da Cercare" --program="Nome Programma" \ 
