@@ -86,14 +86,19 @@ let main argv =
             | false -> programs
             | true -> [ "IncassoDA"; "WSIncassi" ]
         | None -> askProgram()
-    
     let getTextToFind() = 
         match getArgument "text" with
         | Some t -> t
         | None -> 
             printf "Inserire il testo da cercare\n"
             Console.ReadLine()
-    
+
+    let setConfig() = 
+        match getArgument "config" with
+        | Some c -> updateConfig c
+        | None -> ()
+            
+
     let getLogType() = 
         match getArgument "log-type" with
         | Some "debug" -> LogType.DebugTrace
@@ -127,6 +132,7 @@ let main argv =
                       Program = program }
                 let downloadInApp x = dtoBuilder x |> Downloader.downloadLogs
                 let downloadResult = 
+                    setConfig()
                     getApplicazione() 
                     |> List.map downloadInApp 
                     |> List.fold (||) false

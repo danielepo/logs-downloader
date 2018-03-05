@@ -7,7 +7,11 @@ type Servers = JsonProvider<"""./config.json""">
 type Application =  WebApp | WebService
 
 
-let config = Servers.Load "./config.json"
+let mutable config:Servers.Root = Servers.Load "./config.json"
+
+let updateConfig (file:string) = 
+    config <- Servers.Load file
+
 
 type TestServers = string List
 type PreProdServers = string List

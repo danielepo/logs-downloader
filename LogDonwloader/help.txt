@@ -1,10 +1,12 @@
 ﻿Usage: 
 LogDownloader --text="Testo Da Cercare" --program="Nome Programma"               
                 --env="Ambiente" --log-type="Tipo Log" --folder="Cartella"
-                --date="Data" [--time="Ora evento"] 
+                --date="Data" [--time="Ora evento"] [--config="path"]
 
 
 Options: 
+--config	  Path al file di configurazione, se non presente usa quello di default nella cartella Debug
+
 --text        Testo da cercare all'interno dei log
 
 --program     Nome del programma per cui scaricare i log, quelli supportati 
@@ -27,9 +29,9 @@ Options:
                 requests   
                 functional           
  
-    --folder     Cartella nella quale salvare i log
-
-    --program    tipo di log da scaricare. Valori possibili:
+--folder      Cartella nella quale salvare i log
+ 
+--program     tipo di log da scaricare. Valori possibili:
                 Allianz1Web                
                 Annullamenti_AD            
                 Appendici_AD               
